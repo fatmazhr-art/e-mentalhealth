@@ -481,7 +481,7 @@
                             id="email"
                             name="email"
                             class="login-form__input @error('email') is-invalid @enderror"
-                            placeholder="contoh@email.com"
+                            placeholder="admin@gmail.com"
                             value="{{ old('email') }}"
                             required
                             autocomplete="email"
