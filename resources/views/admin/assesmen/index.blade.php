@@ -1,18 +1,3 @@
-{{--
-    ======================================
-    CURHATIN Admin — Assesmen DASS-21
-    ======================================
-    Halaman: /admin/assesmen
-    CSS    : public/css/admin/assesmen.css
-
-    DATA DARI CONTROLLER:
-    - $tab            : tab aktif ('riwayat' | 'konfigurasi')
-    - $totalResponden : jumlah seluruh hasil assesmen
-    - $soalDASS       : paginator soal DASS-21
-    - $jumlahDepresi, $jumlahCemas, $jumlahStres, $totalSoal
-    - $riwayat        : paginator riwayat hasil assesmen
-    ======================================
---}}
 @extends('admin.layouts.base')
 
 @section('title', 'Assesmen DASS-21 — CURHATIN')
@@ -44,7 +29,7 @@
 @section('content')
 <div class="assesmen-wrapper">
 
-    {{-- ===== HEADER ===== --}}
+    
     <div class="assesmen-header">
         <div>
             <h1 class="assesmen-header__title">Assesmen Mandiri DASS-21</h1>
@@ -58,7 +43,7 @@
         </button>
     </div>
 
-    {{-- Flash Messages --}}
+    
     @if(session('success'))
         <div style="background:#D1FAE5;border:1px solid #A7F3D0;color:#065F46;padding:12px 18px;border-radius:10px;margin-bottom:20px;font-weight:500;font-size:13px;">
             <span style="vertical-align:middle" class="material-icons-round" style="font-size:16px">check_circle</span>
@@ -66,7 +51,7 @@
         </div>
     @endif
 
-    {{-- ===== KPI CARD ===== --}}
+    
     <div class="kpi-single">
         <div class="kpi-single__label">Total Responden</div>
         <div class="kpi-single__value">
@@ -80,7 +65,7 @@
         </div>
     </div>
 
-    {{-- ===== TAB NAVIGATION ===== --}}
+    
     <div class="tab-nav">
         <a href="{{ route('admin.assesmen.index', ['tab' => 'riwayat']) }}"
            class="tab-nav__item {{ $tab === 'riwayat' ? 'active' : '' }}">
@@ -92,12 +77,10 @@
         </a>
     </div>
 
-    {{-- ===================================================
-         TAB: KONFIGURASI SOAL
-    =================================================== --}}
+    
     @if($tab === 'konfigurasi')
 
-        {{-- ---- Soal DASS-21 ---- --}}
+        
         <div class="assesmen-card">
             <h2 class="assesmen-card__title">Soal DASS - 21</h2>
             <div class="soal-count">
@@ -167,7 +150,7 @@
                 </table>
             </div>
 
-            {{-- Pagination Info --}}
+            
             @if($soalDASS->total() > 0)
                 <div class="pagination-info">
                     Menampilkan {{ $soalDASS->firstItem() }}–{{ $soalDASS->lastItem() }} dari {{ $soalDASS->total() }} soal
@@ -177,9 +160,7 @@
             @endif
         </div>
 
-    {{-- ===================================================
-         TAB: RIWAYAT ASSESMEN
-    =================================================== --}}
+    
     @else
 
         <div class="assesmen-card">
@@ -252,9 +233,6 @@
 
 </div>
 
-{{-- ===================================================
-     MODAL: TAMBAH SOAL
-=================================================== --}}
 <div class="modal-overlay" id="modalTambah">
     <div class="modal-box">
         <button class="modal-close" id="modalTambahClose">
@@ -299,7 +277,6 @@
 
 @push('scripts')
 <script>
-    // ---- Modal open/close ----
     const modalTambah = document.getElementById('modalTambah');
     const btnTambah   = document.getElementById('btnTambahSoal');
     const btnClose    = document.getElementById('modalTambahClose');
@@ -309,7 +286,6 @@
     const modalTitle  = document.getElementById('modalTitle');
 
     btnTambah.addEventListener('click', function () {
-        // Reset ke mode tambah
         modalTitle.textContent    = 'Tambah Soal DASS-21';
         formSoal.action           = '{{ route('admin.assesmen.store') }}';
         formMethod.value          = 'POST';
@@ -326,7 +302,6 @@
         if (e.target === this) this.classList.remove('show');
     });
 
-    // ---- Edit mode ----
     function openEditModal(id, pertanyaan, kategori, bobot) {
         modalTitle.textContent  = 'Edit Soal DASS-21';
         formSoal.action         = '/admin/assesmen/' + id;

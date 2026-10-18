@@ -1,24 +1,3 @@
-{{--
-    ======================================
-    CURHATIN Admin — Dashboard Page
-    ======================================
-    Halaman dashboard admin: /admin/dashboard
-    
-    CSS  : public/css/admin/dashboard.css
-    
-    KOMPONEN YANG DIPAKAI:
-    - @include('admin.partials.kpi-card')  → Kartu ringkasan KPI
-    - @include('admin.partials.dass-bar')  → Stacked bar DASS-21
-    
-    DATA DARI CONTROLLER:
-    - $totalPengguna  (int)   : Total pengguna terdaftar
-    - $persenAnonim   (float) : Persentase pengguna anonim
-    - $totalSkrining  (int)   : Total skrining DASS-21 selesai
-    - $labelRataRata  (string): Label rata-rata hasil skrining
-    - $distribusi     (array) : Distribusi DASS-21 per kategori
-    - $tabelJurusan   (collection) : Data kasus per jurusan
-    ======================================
---}}
 @extends('admin.layouts.base')
 
 @section('title', 'Dashboard — CURHATIN')
@@ -50,7 +29,7 @@
 @section('content')
 <div class="dashboard-wrapper">
 
-    {{-- Header --}}
+    
     <div class="dashboard-header">
         <div>
             <h1 class="dashboard-header__title">Dashboard</h1>
@@ -66,14 +45,14 @@
         </div>
     </div>
 
-    {{-- Flash Message --}}
+    
     @if (session('success'))
         <div style="background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534; padding: 12px 18px; border-radius: 10px; margin-bottom: 20px; font-weight: 500;">
             {{ session('success') }}
         </div>
     @endif
 
-    {{-- Row 1: KPI Summary Cards --}}
+    
     <div class="kpi-grid">
         @include('admin.partials.kpi-card', [
             'title'   => 'TOTAL PENGGUNA',
@@ -92,7 +71,7 @@
         ])
     </div>
 
-    {{-- Row 2: Distribusi Agregat DASS-21 (Stacked Bar) --}}
+    
     <div class="section-card">
         <h2 class="section-card__title">Distribusi Agregat DASS-21</h2>
 
@@ -112,7 +91,7 @@
         ])
     </div>
 
-    {{-- Row 3: Tabel Kasus per Jurusan --}}
+    
     <div class="section-card">
         <h2 class="section-card__title">Distribusi Agregat DASS-21</h2>
 
@@ -145,7 +124,7 @@
                             </tr>
                         @endforeach
                     @else
-                        {{-- Fallback data mockup --}}
+                        
                         <tr>
                             <td class="jurusan-name">Teknik Informatika</td>
                             <td class="kasus-value">142 (12.5%)</td>
@@ -169,6 +148,16 @@
                         <tr>
                             <td class="jurusan-name">Teknik Mesin</td>
                             <td class="kasus-value">84 (5.5%)</td>
+                            <td>
+                                <span class="trend-badge trend-badge--neutral">Stabil</span>
+                            </td>
+                            <td>
+                                <span class="status-pill status-pill--success">Terkendali</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="jurusan-name">Teknik Elektro</td>
+                            <td class="kasus-value">62 (4.5%)</td>
                             <td>
                                 <span class="trend-badge trend-badge--neutral">Stabil</span>
                             </td>

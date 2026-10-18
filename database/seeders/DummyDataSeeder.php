@@ -54,12 +54,10 @@ class DummyDataSeeder extends Seeder
 
             // Mahasiswa — Teknik Elektro
             ['nama' => 'Galih Nugroho',       'nama_anonim' => 'Petir Kecil',    'role' => 'user', 'prodi' => 'S1 Teknik Elektro', 'jurusan' => 'Teknik Elektro',     'nim' => '20240401', 'email' => 'galih@student.ac.id',    'kata_sandi' => Hash::make('password123')],
-            ['nama' => 'Putri Handayani',     'nama_anonim' => null,             'role' => 'user', 'prodi' => 'S1 Teknik Elektro', 'jurusan' => 'Teknik Elektro',     'nim' => '20240402', 'email' => 'putri.h@student.ac.id',  'kata_sandi' => Hash::make('password123')],
-            ['nama' => 'Taufik Hidayat',      'nama_anonim' => 'Kabut Tipis',    'role' => 'user', 'prodi' => 'S1 Teknik Elektro', 'jurusan' => 'Teknik Elektro',     'nim' => '20240403', 'email' => 'taufik@student.ac.id',   'kata_sandi' => Hash::make('password123')],
-
-            // Mahasiswa — Teknik Sipil
-            ['nama' => 'Bayu Setiawan',       'nama_anonim' => null,             'role' => 'user', 'prodi' => 'S1 Teknik Sipil',   'jurusan' => 'Teknik Sipil',       'nim' => '20240501', 'email' => 'bayu@student.ac.id',     'kata_sandi' => Hash::make('password123')],
-            ['nama' => 'Nur Fadilah',         'nama_anonim' => 'Pelangi Semu',   'role' => 'user', 'prodi' => 'S1 Teknik Sipil',   'jurusan' => 'Teknik Sipil',       'nim' => '20240502', 'email' => 'nur@student.ac.id',      'kata_sandi' => Hash::make('password123')],
+            ['nama' => 'Putri Handayani',     'nama_anonim' => null,             'role' => 'user', 'prodi' => 'S1 Manajemen',      'jurusan' => 'Manajemen Bisnis',   'nim' => '20240207', 'email' => 'putri.h@student.ac.id',  'kata_sandi' => Hash::make('password123')],
+            ['nama' => 'Taufik Hidayat',      'nama_anonim' => 'Kabut Tipis',    'role' => 'user', 'prodi' => 'S1 Informatika',    'jurusan' => 'Teknik Informatika', 'nim' => '20240109', 'email' => 'taufik@student.ac.id',   'kata_sandi' => Hash::make('password123')],
+            ['nama' => 'Bayu Setiawan',       'nama_anonim' => null,             'role' => 'user', 'prodi' => 'S1 Teknik Elektro', 'jurusan' => 'Teknik Elektro',     'nim' => '20240402', 'email' => 'bayu@student.ac.id',     'kata_sandi' => Hash::make('password123')],
+            ['nama' => 'Nur Fadilah',         'nama_anonim' => 'Pelangi Semu',   'role' => 'user', 'prodi' => 'S1 Akuntansi',      'jurusan' => 'Manajemen Bisnis',   'nim' => '20240208', 'email' => 'nur@student.ac.id',      'kata_sandi' => Hash::make('password123')],
         ];
 
         foreach ($penggunaData as $p) {

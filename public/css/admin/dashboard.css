@@ -114,42 +114,56 @@
 
 /* ---- DASS-21 Stacked Bar Chart ---- */
 .dass-row {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
 }
 
 .dass-row:last-child {
     margin-bottom: 4px;
 }
 
-.dass-row__header {
+.dass-row__labels {
     display: flex;
-    justify-content: space-between;
+    width: 100%;
     align-items: baseline;
     margin-bottom: 6px;
 }
 
-.dass-row__label {
+.dass-col-label {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+    padding-right: 2px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.dass-col-label--normal {
+    justify-content: space-between;
+    padding-right: 6px;
+}
+
+.dass-label-title {
     font-size: 15px;
     font-weight: 800;
     color: #171717;
+    white-space: nowrap;
 }
 
-.dass-row__legend {
-    display: flex;
-    gap: 20px;
+.dass-label-stat {
     font-size: 11px;
     font-style: italic;
     font-weight: 600;
     color: #262626;
+    white-space: nowrap;
 }
 
 .stacked-bar {
     height: 18px;
-    border-radius: 3px;
+    border-radius: 4px;
     display: flex;
     overflow: hidden;
-    background: #D9D9D9;
     width: 100%;
+    background: transparent;
 }
 
 .stacked-bar__seg {
@@ -157,12 +171,11 @@
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Severity Color Segments */
-.seg--normal       { background-color: #84CC16; }  /* Hijau muda */
-.seg--ringan       { background-color: #0052FF; }  /* Biru */
-.seg--sedang       { background-color: #FF2A00; }  /* Merah / Oranye */
-.seg--berat        { background-color: #CC0000; }  /* Merah tua */
-.seg--sangat-berat { background-color: #550714; }  /* Maroon gelap */
+.seg--normal       { background-color: #84CC16; }
+.seg--ringan       { background-color: #0052FF; }
+.seg--sedang       { background-color: #FF2A00; }
+.seg--berat        { background-color: #CC0000; }
+.seg--sangat-berat { background-color: #550714; }
 
 /* ---- Tabel Kasus per Jurusan ---- */
 .table-container {

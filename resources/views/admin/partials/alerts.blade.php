@@ -1,12 +1,3 @@
-{{--
-    Partial: Flash Messages (Alert)
-    ================================
-    Menampilkan pesan sukses/error dari session.
-    
-    CARA PAKAI:
-    @include('admin.partials.alerts')
---}}
-
 @if (session('success'))
     <div class="login-alert login-alert--success" role="alert">
         <span class="material-icons-round">check_circle</span>
