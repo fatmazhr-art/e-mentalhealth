@@ -1,0 +1,265 @@
+/* ---- Dashboard Header ---- */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.dashboard-header__title {
+    font-size: 38px;
+    font-weight: 900;
+    color: #171717;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+
+.dashboard-header__subtitle {
+    font-size: 15px;
+    font-weight: 500;
+    color: #404040;
+    max-width: 600px;
+    line-height: 1.4;
+}
+
+/* ---- Export Button ---- */
+.btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #7A0C1E;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(122, 12, 30, 0.25);
+}
+
+.btn-export:hover {
+    background: #600816;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.btn-export .material-icons-round {
+    font-size: 18px;
+}
+
+/* ---- KPI Summary Cards ---- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    background: #F8F3EC;
+    border: 1.5px solid #E2D9CD;
+    border-radius: 18px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.kpi-card__title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1F1F1F;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+.kpi-card__value {
+    font-size: 26px;
+    font-weight: 900;
+    font-style: italic;
+    color: #8B0E23;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.kpi-card__subtext {
+    font-size: 13px;
+    font-style: italic;
+    color: #333333;
+    font-weight: 500;
+}
+
+/* ---- Section Card (Container Umum) ---- */
+.section-card {
+    background: #F8F3EC;
+    border: 1.5px solid #E2D9CD;
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.section-card__title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #171717;
+    margin-bottom: 20px;
+}
+
+/* ---- DASS-21 Stacked Bar Chart ---- */
+.dass-row {
+    margin-bottom: 22px;
+}
+
+.dass-row:last-child {
+    margin-bottom: 4px;
+}
+
+.dass-row__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.dass-row__label {
+    font-size: 15px;
+    font-weight: 800;
+    color: #171717;
+}
+
+.dass-row__legend {
+    display: flex;
+    gap: 20px;
+    font-size: 11px;
+    font-style: italic;
+    font-weight: 600;
+    color: #262626;
+}
+
+.stacked-bar {
+    height: 18px;
+    border-radius: 3px;
+    display: flex;
+    overflow: hidden;
+    background: #D9D9D9;
+    width: 100%;
+}
+
+.stacked-bar__seg {
+    height: 100%;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Severity Color Segments */
+.seg--normal       { background-color: #84CC16; }  /* Hijau muda */
+.seg--ringan       { background-color: #0052FF; }  /* Biru */
+.seg--sedang       { background-color: #FF2A00; }  /* Merah / Oranye */
+.seg--berat        { background-color: #CC0000; }  /* Merah tua */
+.seg--sangat-berat { background-color: #550714; }  /* Maroon gelap */
+
+/* ---- Tabel Kasus per Jurusan ---- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.curhatin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.curhatin-table th {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1F1F1F;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.curhatin-table td {
+    padding: 14px 14px;
+    font-size: 13.5px;
+    color: #1F1F1F;
+    vertical-align: middle;
+}
+
+.curhatin-table tr:not(:last-child) td {
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.jurusan-name {
+    font-weight: 800;
+    color: #171717;
+}
+
+.kasus-value {
+    font-weight: 600;
+    color: #1F1F1F;
+}
+
+/* ---- Trend Badge ---- */
+.trend-badge {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.trend-badge--danger {
+    color: #DC2626;
+}
+
+.trend-badge--neutral {
+    color: #1F1F1F;
+}
+
+/* ---- Status Pill ---- */
+.status-pill {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.status-pill--danger {
+    background-color: #8B0E23;
+    color: #FFFFFF;
+}
+
+.status-pill--warning {
+    background-color: #F8D384;
+    color: #92400E;
+}
+
+.status-pill--success {
+    background-color: #52B76D;
+    color: #FFFFFF;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dass-row__header {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .dass-row__legend {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+    }
+}
