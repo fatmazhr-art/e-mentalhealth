@@ -12,8 +12,8 @@
         <span class="material-icons-round">assignment</span>
         <span>Asesmen DASS-21</span>
     </a>
-    <a href="#" class="sidebar-nav__item">
-        <span class="material-icons-round">coffee</span>
+    <a href="{{ route('admin.rehat.index') }}" class="sidebar-nav__item">
+        <span class="material-icons-round">crop_square</span>
         <span>Rehat</span>
     </a>
     <a href="#" class="sidebar-nav__item">

@@ -13,9 +13,7 @@
     
     <nav class="login-navbar" role="navigation" aria-label="Admin Navigation">
         <div class="login-navbar__logo">
-            <div class="login-navbar__icon">
-                <span class="material-icons-round">favorite</span>
-            </div>
+            <img src="{{ asset('images/curhatin-logo.png') }}" alt="Logo CURHATIN" class="login-navbar__logo-img">
             <span class="login-navbar__brand">CURHATIN</span>
         </div>
     </nav>
@@ -88,7 +86,7 @@
                         <input type="checkbox" name="remember" id="remember">
                         <span class="login-form__remember-text">Ingat Saya diperangkat ini</span>
                     </label>
-                    <a href="#" class="login-form__forgot">Lupa Kata Sandi?</a>
+                    <a href="{{ route('admin.password.request') }}" class="login-form__forgot">Lupa Kata Sandi?</a>
                 </div>
 
                 

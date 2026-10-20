@@ -1,59 +1,82 @@
 :root {
-    /* ---- Maroon Palette (Warna Utama Brand) ---- */
-    --maroon-900: #3B0A0A;
-    --maroon-800: #5C1010;
-    --maroon-700: #6B1515;
-    --maroon-600: #7A1A1A;
-    --maroon-500: #8B1E1E;
-    --maroon-400: #A03030;
-    --maroon-300: #C05050;
-    --maroon-200: #D88080;
-    --maroon-100: #EEB0B0;
-    --maroon-50:  #FBE8E8;
+    /* ---- Brand Colors (Sesuai Desain CURHATIN) ---- */
+    --maroon-header:    #800020;
+    --maroon-900:       #3B0A0A;
+    --maroon-800:       #800020;
+    --maroon-700:       #7A0C1E;
+    --maroon-600:       #8B0E23;
+    --maroon-500:       #A3152F;
+    --maroon-400:       #C03048;
+    --maroon-300:       #D4525F;
+    --maroon-200:       #EAA0A8;
+    --maroon-100:       #F7D2D6;
+    --maroon-50:        #FDF2F3;
 
-    /* ---- Cream Palette (Background) ---- */
-    --cream-50:  #FFFDF9;
-    --cream-100: #FFF8F0;
-    --cream-200: #FFF0E0;
-    --cream-300: #FFEBD5;
-    --cream-400: #FFE0C0;
+    /* ---- Sidebar & Layout Colors ---- */
+    --sidebar-bg:       #F3E6D3;
+    --menu-active-pill: #D4525F;
+    --card-bg:          #FFF9F2;
+    --card-border:      #EDE3D8;
+    --page-bg:          #FFFFFF;
+    --text-primary:     #1A1A1A;
+    --text-secondary:   #404040;
+    --text-muted:       #737373;
 
-    /* ---- Neutral Palette (Teks & Border) ---- */
-    --neutral-50:  #FAFAFA;
-    --neutral-100: #F5F5F5;
-    --neutral-200: #E5E5E5;
-    --neutral-300: #D4D4D4;
-    --neutral-400: #A3A3A3;
-    --neutral-500: #737373;
-    --neutral-600: #525252;
-    --neutral-700: #404040;
-    --neutral-800: #262626;
-    --neutral-900: #171717;
+    /* ---- Cream Palette ---- */
+    --cream-50:         #FFFDF9;
+    --cream-100:        #FFF9F2;
+    --cream-200:        #F3E6D3;
+    --cream-300:        #EAD8C0;
+
+    /* ---- Neutral Palette ---- */
+    --neutral-50:       #FAFAFA;
+    --neutral-100:      #F5F5F5;
+    --neutral-200:      #E5E5E5;
+    --neutral-300:      #D4D4D4;
+    --neutral-400:      #A3A3A3;
+    --neutral-500:      #737373;
+    --neutral-600:      #525252;
+    --neutral-700:      #404040;
+    --neutral-800:      #262626;
+    --neutral-900:      #1A1A1A;
+
+    /* ---- Progress Bar DASS-21 (Sesuai Spesifikasi) ---- */
+    --dass-normal:       #9ACD00;
+    --dass-ringan:       #1542F4;
+    --dass-sedang:       #EBA203;
+    --dass-berat:        #E40000;
+    --dass-sangat-berat: #6E0202;
+
+    /* ---- Badge Status ---- */
+    --badge-perhatian:   #800020;
+    --badge-waspada:     #F7DC8A;
+    --badge-terkendali:   #6CC56C;
 
     /* ---- Status Colors ---- */
-    --success:    #22C55E;
-    --success-bg: #F0FDF4;
-    --warning:    #F59E0B;
-    --warning-bg: #FFFBEB;
-    --danger:     #EF4444;
-    --danger-bg:  #FEF2F2;
-    --info:       #3B82F6;
+    --success:          #22C55E;
+    --success-bg:       #F0FDF4;
+    --warning:          #F59E0B;
+    --warning-bg:       #FFFBEB;
+    --danger:           #EF4444;
+    --danger-bg:        #FEF2F2;
+    --info:             #3B82F6;
 
-    /* ---- Typography ---- */
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    /* ---- Typography (Poppins Sesuai Desain) ---- */
+    --font-family:      'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-    /* ---- Layout ---- */
-    --sidebar-width: 250px;
-    --navbar-height: 60px;
+    /* ---- Layout Dimensions (Sesuai Screenshot Desain) ---- */
+    --sidebar-width:    205px;
+    --navbar-height:    61px;
 
-    /* ---- Shadows ---- */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+    /* ---- Shadows & Radii ---- */
+    --shadow-sm:        0 1px 2px rgba(0,0,0,0.05);
+    --shadow-card:      0 4px 14px rgba(0,0,0,0.05);
+    --shadow-md:        0 4px 6px -1px rgba(0,0,0,0.08);
+    --shadow-lg:        0 10px 15px -3px rgba(0,0,0,0.08);
 
-    /* ---- Border Radius ---- */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-sm:        6px;
+    --radius-md:        12px;
+    --radius-lg:        18px;
+    --radius-xl:        20px;
+    --radius-pill:      9999px;
 }

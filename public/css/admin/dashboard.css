@@ -1,28 +1,77 @@
-/* ---- Dashboard Header ---- */
+/* ==========================================================================
+   CURHATIN Admin Dashboard Styles
+   Pixel-Perfect Implementation according to screenshot & specifications:
+   - Font: Poppins
+   - Colors: Maroon #800020, Cream #F3E6D3, Card #FFF9F2, Border #EDE3D8
+   - Progress bar: #9ACD00, #1542F4, #EBA203, #E40000, #6E0202
+   ========================================================================== */
+
+.dashboard-wrapper {
+    width: 100%;
+}
+
+/* ---- Breadcrumb (Mode Detail) ---- */
+.dashboard-breadcrumb {
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 500;
+    color: #4B5563;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.dashboard-breadcrumb a {
+    color: #4B5563;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.dashboard-breadcrumb a:hover {
+    color: var(--maroon-header);
+    text-decoration: underline;
+}
+
+.dashboard-breadcrumb .separator {
+    margin: 0 4px;
+    color: #9CA3AF;
+}
+
+.dashboard-breadcrumb .current {
+    color: var(--maroon-header);
+    font-weight: 700;
+}
+
+/* ---- Header Area ---- */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 16px;
 }
 
 .dashboard-header__title {
+    font-family: var(--font-family);
     font-size: 38px;
-    font-weight: 900;
-    color: #171717;
+    font-weight: 800;
+    color: var(--text-primary);
     letter-spacing: -0.5px;
-    line-height: 1.1;
-    margin-bottom: 8px;
+    line-height: 1.15;
+    margin: 0 0 6px 0;
 }
 
 .dashboard-header__subtitle {
-    font-size: 15px;
+    font-family: var(--font-family);
+    font-size: 14.5px;
     font-weight: 500;
-    color: #404040;
-    max-width: 600px;
+    color: var(--text-primary);
+    max-width: 700px;
     line-height: 1.4;
+    margin: 0;
 }
 
 /* ---- Export Button ---- */
@@ -30,91 +79,110 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #7A0C1E;
+    background-color: var(--maroon-header);
     color: #FFFFFF;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: 13px;
     font-weight: 600;
-    font-size: 14px;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
     text-decoration: none;
-    box-shadow: 0 2px 6px rgba(122, 12, 30, 0.25);
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .btn-export:hover {
-    background: #600816;
+    background-color: #600018;
     color: #FFFFFF;
-    transform: translateY(-1px);
 }
 
 .btn-export .material-icons-round {
     font-size: 18px;
 }
 
-/* ---- KPI Summary Cards ---- */
-.kpi-grid {
+/* ---- Dua Card Statistik Sejajar (Overview) ---- */
+.kpi-grid-two {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    margin-bottom: 24px;
-}
-
-.kpi-card {
-    background: #F8F3EC;
-    border: 1.5px solid #E2D9CD;
-    border-radius: 18px;
-    padding: 24px 28px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.kpi-card__title {
-    font-size: 13px;
-    font-weight: 800;
-    color: #1F1F1F;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 8px;
-}
-
-.kpi-card__value {
-    font-size: 26px;
-    font-weight: 900;
-    font-style: italic;
-    color: #8B0E23;
-    line-height: 1.2;
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
-}
-
-.kpi-card__subtext {
-    font-size: 13px;
-    font-style: italic;
-    color: #333333;
-    font-weight: 500;
-}
-
-/* ---- Section Card (Container Umum) ---- */
-.section-card {
-    background: #F8F3EC;
-    border: 1.5px solid #E2D9CD;
-    border-radius: 18px;
-    padding: 24px 28px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-
-.section-card__title {
-    font-size: 17px;
-    font-weight: 800;
-    color: #171717;
+    gap: 20px;
     margin-bottom: 20px;
 }
 
-/* ---- DASS-21 Stacked Bar Chart ---- */
+/* 3 Stat Cards Grid (Detail) */
+.stat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 20px 24px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+}
+
+.stat-card__label {
+    font-family: var(--font-family);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.stat-card__value {
+    font-family: var(--font-family);
+    font-size: 30px;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--maroon-header);
+    line-height: 1.1;
+    margin: 8px 0 6px 0;
+    letter-spacing: -0.5px;
+}
+
+.stat-card__subtext {
+    font-family: var(--font-family);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.stat-card__subtext--italic {
+    font-style: italic;
+}
+
+/* ---- Section Card Container ---- */
+.section-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+}
+
+.section-card__title {
+    font-family: var(--font-family);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 18px 0;
+}
+
+/* ---- DASS-21 Horizontal Stacked Bar Chart ---- */
 .dass-row {
-    margin-bottom: 24px;
+    margin-bottom: 18px;
 }
 
 .dass-row:last-child {
@@ -124,60 +192,96 @@
 .dass-row__labels {
     display: flex;
     width: 100%;
-    align-items: baseline;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
-.dass-col-label {
-    display: flex;
-    justify-content: flex-end;
-    align-items: baseline;
-    padding-right: 2px;
-    box-sizing: border-box;
-    white-space: nowrap;
-}
-
-.dass-col-label--normal {
-    justify-content: space-between;
-    padding-right: 6px;
-}
-
-.dass-label-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: #171717;
-    white-space: nowrap;
-}
-
-.dass-label-stat {
-    font-size: 11px;
+.dass-col {
+    font-family: var(--font-family);
+    font-size: 11.5px;
     font-style: italic;
-    font-weight: 600;
-    color: #262626;
+    font-weight: 500;
+    color: var(--text-primary);
     white-space: nowrap;
+}
+
+.dass-col--1 {
+    width: 43%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-right: 4px;
+}
+
+.dass-title {
+    font-family: var(--font-family);
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.dass-col--2 {
+    width: 15%;
+    text-align: right;
+    padding-right: 2px;
+}
+
+.dass-col--3 {
+    width: 10%;
+    text-align: right;
+    padding-right: 2px;
+}
+
+.dass-col--4 {
+    width: 18%;
+    text-align: right;
+    padding-right: 2px;
+}
+
+.dass-col--5 {
+    width: 14%;
+    text-align: right;
 }
 
 .stacked-bar {
-    height: 18px;
-    border-radius: 4px;
     display: flex;
-    overflow: hidden;
+    height: 11px;
     width: 100%;
-    background: transparent;
+    background-color: transparent;
+    overflow: hidden;
 }
 
 .stacked-bar__seg {
     height: 100%;
-    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.seg--normal       { background-color: #84CC16; }
-.seg--ringan       { background-color: #0052FF; }
-.seg--sedang       { background-color: #FF2A00; }
-.seg--berat        { background-color: #CC0000; }
-.seg--sangat-berat { background-color: #550714; }
+/* Segmen Bar Sesuai Lebar Kolom Di Atasnya */
+.seg--normal {
+    width: 43%;
+    background-color: var(--dass-normal);       /* #9ACD00 */
+}
 
-/* ---- Tabel Kasus per Jurusan ---- */
+.seg--ringan {
+    width: 15%;
+    background-color: var(--dass-ringan);       /* #1542F4 */
+}
+
+.seg--sedang {
+    width: 10%;
+    background-color: var(--dass-sedang);       /* #EBA203 */
+}
+
+.seg--berat {
+    width: 18%;
+    background-color: var(--dass-berat);        /* #E40000 */
+}
+
+.seg--sangat-berat {
+    width: 14%;
+    background-color: var(--dass-sangat-berat); /* #6E0202 */
+}
+
+/* ---- Tabel Kasus per Jurusan (Mode Overview Sesuai Desain) ---- */
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -190,89 +294,135 @@
 }
 
 .curhatin-table th {
-    font-size: 12px;
+    font-family: var(--font-family);
+    font-size: 12.5px;
     font-weight: 800;
-    color: #1F1F1F;
+    color: var(--text-primary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 12px 14px;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
+    letter-spacing: 0.3px;
+    padding: 6px 12px 14px 0;
+    border-bottom: none;
 }
 
 .curhatin-table td {
-    padding: 14px 14px;
+    padding: 12px 12px 12px 0;
+    font-family: var(--font-family);
     font-size: 13.5px;
-    color: #1F1F1F;
+    color: var(--text-primary);
     vertical-align: middle;
+    border-bottom: none;
 }
 
-.curhatin-table tr:not(:last-child) td {
-    border-bottom: 1px solid rgba(0,0,0,0.03);
+.jurusan-name-link {
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
-.jurusan-name {
-    font-weight: 800;
-    color: #171717;
+.jurusan-name-link:hover {
+    color: var(--maroon-header);
+    text-decoration: underline;
 }
 
 .kasus-value {
-    font-weight: 600;
-    color: #1F1F1F;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
-/* ---- Trend Badge ---- */
-.trend-badge {
+.trend-text--danger {
+    color: var(--maroon-header);
     font-weight: 600;
     font-size: 13px;
 }
 
-.trend-badge--danger {
-    color: #DC2626;
+.trend-text--neutral {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 13px;
 }
 
-.trend-badge--neutral {
-    color: #1F1F1F;
-}
-
-/* ---- Status Pill ---- */
-.status-pill {
+/* Badge Status Sesuai Desain */
+.status-badge {
     display: inline-block;
-    padding: 4px 14px;
+    padding: 3px 12px;
     border-radius: 4px;
+    font-family: var(--font-family);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     text-align: center;
-    letter-spacing: 0.3px;
-}
-
-.status-pill--danger {
-    background-color: #8B0E23;
     color: #FFFFFF;
+    white-space: nowrap;
 }
 
-.status-pill--warning {
-    background-color: #F8D384;
-    color: #92400E;
+.status-badge--perhatian {
+    background-color: var(--badge-perhatian); /* #800020 */
 }
 
-.status-pill--success {
-    background-color: #52B76D;
-    color: #FFFFFF;
+.status-badge--waspada {
+    background-color: var(--badge-waspada);   /* #F7DC8A */
+}
+
+.status-badge--terkendali {
+    background-color: var(--badge-terkendali); /* #6CC56C */
+}
+
+/* ---- Kasus Berat Antar Jurusan (Mode Detail) ---- */
+.jurusan-bars-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.jurusan-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.jurusan-bar-name {
+    width: 140px;
+    flex-shrink: 0;
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.jurusan-bar-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 650px;
+}
+
+.jurusan-bar-fill {
+    height: 15px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.jurusan-bar-percent {
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
 }
 
 /* ---- Responsive ---- */
-@media (max-width: 768px) {
-    .kpi-grid {
+@media (max-width: 1024px) {
+    .stat-cards-grid {
         grid-template-columns: 1fr;
     }
 
-    .dass-row__header {
-        flex-direction: column;
-        gap: 4px;
+    .kpi-grid-two {
+        grid-template-columns: 1fr;
     }
 
-    .dass-row__legend {
-        flex-wrap: wrap;
-        gap: 8px 12px;
+    .dashboard-header__title {
+        font-size: 32px;
     }
 }

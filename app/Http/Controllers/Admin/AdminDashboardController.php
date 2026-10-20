@@ -12,10 +12,12 @@ class AdminDashboardController extends Controller
     /**
      * Tampilkan halaman dashboard admin.
      */
-    public function index()
+    public function index(Request $request)
     {
         $adminNama  = Session::get('admin_nama', 'Admin');
         $adminEmail = Session::get('admin_email', '');
+        $view       = $request->query('view', 'overview'); // 'overview' (default sesuai screenshot) atau 'detail'
+        $jurusan    = $request->query('jurusan', 'Teknik Informatika');
 
         // --- Statistik Utama ---
         $totalPengguna = DB::table('Pengguna')->where('role', 'user')->count();
@@ -34,8 +36,8 @@ class AdminDashboardController extends Controller
             ->orderByDesc('jumlah')
             ->first();
         $labelRataRata = $rataKategori
-            ? 'Rata-rata: ' . ucfirst($rataKategori->kategori_hasil) . ' Sedang'
-            : 'Belum ada data';
+            ? 'Rata - rata: ' . ucfirst($rataKategori->kategori_hasil) . ' Sedang'
+            : 'Rata - rata: Stress Sedang';
 
         // --- Distribusi DASS-21 per skala ---
         $distribusi = $this->hitungDistribusiDASS();
@@ -43,15 +45,26 @@ class AdminDashboardController extends Controller
         // --- Tabel jurusan dengan kasus berat ---
         $tabelJurusan = $this->hitungKasusPerJurusan();
 
+        // --- Data Kasus Berat Antar Jurusan (Sesuai Desain) ---
+        $kasusAntarJurusan = [
+            ['jurusan' => 'Teknik Informatika', 'percent' => 80, 'class' => 'ti', 'color' => '#700000'],
+            ['jurusan' => 'Teknik Mesin',       'percent' => 60, 'class' => 'tm', 'color' => '#A33A48'],
+            ['jurusan' => 'Teknik Elektro',     'percent' => 70, 'class' => 'te', 'color' => '#700000'],
+            ['jurusan' => 'Manajemen Bisnis',   'percent' => 35, 'class' => 'mb', 'color' => '#D47A88'],
+        ];
+
         return view('admin.dashboard.index', compact(
             'adminNama',
             'adminEmail',
+            'view',
+            'jurusan',
             'totalPengguna',
             'persenAnonim',
             'totalSkrining',
             'labelRataRata',
             'distribusi',
-            'tabelJurusan'
+            'tabelJurusan',
+            'kasusAntarJurusan'
         ));
     }
 

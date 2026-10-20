@@ -1,247 +1,204 @@
+/* ==========================================================================
+   CURHATIN Admin Layout Styles
+   Sesuai Spesifikasi Desain:
+   - Header: Full-width, tinggi 70px, background maroon #800020
+   - Sidebar: Lebar 230px, background krem #F3E6D3, tinggi penuh di bawah header
+   - Menu Aktif: Pill rounded #D4525F, teks & ikon putih
+   - Menu Non-aktif: Teks & ikon hitam #1A1A1A, semibold
+   - Konten: Background putih #FFFFFF, padding lega
+   ========================================================================== */
 
-.admin-shell {
-    display: flex;
-    min-height: 100vh;
-}
-
-/* ---- Sidebar ---- */
-.admin-sidebar {
-    width: var(--sidebar-width);
-    background: var(--cream-100);
-    border-right: none;
-    display: flex;
-    flex-direction: column;
+/* ---- Top Header (Full Width Maroon #800020) ---- */
+.app-header {
+    height: var(--navbar-height);
+    background-color: var(--maroon-header);
     position: fixed;
     top: 0;
     left: 0;
-    bottom: 0;
-    z-index: 200;
-    transition: transform 0.3s ease;
-}
-
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 20px;
-    background: var(--maroon-800);
-    height: var(--navbar-height);
-    flex-shrink: 0;
-}
-
-.sidebar-brand__icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--maroon-300), var(--maroon-500));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(139, 30, 30, 0.4);
-}
-
-.sidebar-brand__icon .material-icons-round {
-    font-size: 20px;
-    color: white;
-}
-
-.sidebar-brand__text {
-    font-size: 18px;
-    font-weight: 800;
-    color: #FFFFFF;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
-
-/* ---- Sidebar Navigation ---- */
-.sidebar-nav {
-    flex: 1;
-    padding: 20px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.sidebar-nav__item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--neutral-600);
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.sidebar-nav__item:hover {
-    background: var(--cream-200);
-    color: var(--maroon-700);
-}
-
-.sidebar-nav__item.active {
-    background: var(--maroon-700);
-    color: #FFFFFF;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(139, 30, 30, 0.25);
-}
-
-.sidebar-nav__item .material-icons-round {
-    font-size: 20px;
-}
-
-/* ---- Sidebar Footer (Logout) ---- */
-.sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid var(--neutral-200);
-}
-
-.sidebar-footer__logout {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 16px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--neutral-200);
-    background: transparent;
-    font-family: var(--font-family);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--neutral-600);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.sidebar-footer__logout:hover {
-    background: var(--danger-bg);
-    border-color: #FECACA;
-    color: var(--danger);
-}
-
-.sidebar-footer__logout .material-icons-round {
-    font-size: 18px;
-}
-
-/* ---- Main Content Area ---- */
-.admin-content {
-    flex: 1;
-    margin-left: var(--sidebar-width);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* ---- Top Navbar ---- */
-.admin-topbar {
+    right: 0;
+    z-index: 300;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
-    height: var(--navbar-height);
-    background: var(--maroon-800);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    padding: 0 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-.topbar-left {
+.app-header__brand {
+    display: flex;
+    align-items: center;
+}
+
+.app-header__logo-link {
     display: flex;
     align-items: center;
     gap: 12px;
+    text-decoration: none;
+}
+
+.app-header__logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: contain;
+    background-color: #FFFFFF;
+}
+
+.app-header__brand-text {
+    font-family: var(--font-family);
+    font-size: 20px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.app-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 .topbar-hamburger {
     display: none;
     background: none;
     border: none;
-    color: white;
+    color: #FFFFFF;
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
+    border-radius: 6px;
 }
 
 .topbar-hamburger .material-icons-round {
     font-size: 24px;
 }
 
-.topbar-right {
+/* ---- Admin Shell ---- */
+.admin-shell {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    min-height: 100vh;
+    padding-top: var(--navbar-height);
+    background-color: var(--page-bg);
 }
 
-.topbar-user {
+/* ---- Sidebar Kiri (Krem #F3E6D3, Lebar 205px) ---- */
+.admin-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    bottom: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-right: none;
+}
+
+.sidebar-nav {
+    padding: 24px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.sidebar-nav__item {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: rgba(255,255,255,0.9);
-}
-
-.topbar-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--maroon-300), var(--maroon-600));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-family);
+    font-size: 14px;
     font-weight: 700;
-    color: white;
-    text-transform: uppercase;
-    border: 2px solid rgba(255,255,255,0.2);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
-.topbar-user__name {
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
+.sidebar-nav__item .material-icons-round {
+    font-size: 22px;
+    color: var(--text-primary);
+    transition: color 0.2s ease;
 }
 
-.topbar-user__role {
-    font-size: 11px;
-    color: rgba(255,255,255,0.6);
+.sidebar-nav__item:hover:not(.active) {
+    background-color: rgba(212, 82, 95, 0.12);
+    color: var(--maroon-header);
 }
 
-/* ---- Page Content ---- */
+.sidebar-nav__item:hover:not(.active) .material-icons-round {
+    color: var(--maroon-header);
+}
+
+/* Menu Aktif (Pill Rounded Penuh #D4525F, Teks & Ikon Putih) */
+.sidebar-nav__item.active {
+    background-color: var(--menu-active-pill);
+    color: #FFFFFF;
+}
+
+.sidebar-nav__item.active .material-icons-round {
+    color: #FFFFFF;
+}
+
+/* Footer Sidebar (Logout) */
+.sidebar-footer {
+    display: none;
+}
+
+/* ---- Area Konten Utama ---- */
+.admin-content {
+    margin-left: var(--sidebar-width);
+    flex: 1;
+    min-height: calc(100vh - var(--navbar-height));
+    background-color: var(--page-bg);
+    display: flex;
+    flex-direction: column;
+}
+
 .page-content {
     flex: 1;
-    padding: 32px;
+    padding: 24px 32px 40px 32px;
+    max-width: 100%;
 }
 
-/* ---- Mobile Overlay ---- */
+/* ---- Overlay Mobile ---- */
 .sidebar-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 190;
-}
-
-.sidebar-overlay.show {
-    display: block;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 150;
 }
 
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
+    .page-content {
+        padding: 24px 20px;
+    }
+
+    .topbar-hamburger {
+        display: block;
+    }
+
     .admin-sidebar {
         transform: translateX(-100%);
     }
 
+    .admin-sidebar.is-open,
     .admin-sidebar.open {
         transform: translateX(0);
     }
 
+    .sidebar-overlay.is-open,
+    .sidebar-overlay.show {
+        display: block;
+    }
+
     .admin-content {
         margin-left: 0;
-    }
-
-    .topbar-hamburger {
-        display: flex;
-    }
-
-    .page-content {
-        padding: 20px 16px;
     }
 }

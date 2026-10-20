@@ -12,9 +12,23 @@
     </div>
 @endif
 
+@if (session('info'))
+    <div class="login-alert login-alert--info" role="alert">
+        <span class="material-icons-round">info</span>
+        <span>{{ session('info') }}</span>
+    </div>
+@endif
+
 @if ($errors->has('login'))
     <div class="login-alert login-alert--error" role="alert">
         <span class="material-icons-round">error</span>
         <span>{{ $errors->first('login') }}</span>
+    </div>
+@endif
+
+@if ($errors->has('error'))
+    <div class="login-alert login-alert--error" role="alert">
+        <span class="material-icons-round">error</span>
+        <span>{{ $errors->first('error') }}</span>
     </div>
 @endif

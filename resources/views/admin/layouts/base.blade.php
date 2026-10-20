@@ -5,45 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'CURHATIN Admin')</title>
-    <meta name="description" content="@yield('meta_description', 'Panel Admin CURHATIN - Sistem E-Mental Health')">
+    <meta name="description" content="@yield('meta_description', 'Panel Admin CURHATIN - Sistem E-Mental Health Kampus')">
 
-    
+    <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 
-    
+    <!-- Material Icons Round -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
-    
+    <!-- Global Stylesheets -->
     <link rel="stylesheet" href="{{ asset('css/admin/variables.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/base.css') }}">
 
-    
     @hasSection('content')
         <link rel="stylesheet" href="{{ asset('css/admin/layout.css') }}">
     @endif
 
-    
     @stack('styles')
 </head>
 <body>
 
     @hasSection('body')
-        
         @yield('body')
     @else
+        <!-- Full-Width Top Header (Sesuai Desain) -->
+        <header class="app-header" role="banner">
+            <div class="app-header__brand">
+                <a href="{{ route('admin.dashboard') }}" class="app-header__logo-link">
+                    <img src="{{ asset('images/curhatin-logo.png') }}" alt="Logo CURHATIN" class="app-header__logo-img">
+                    <span class="app-header__brand-text">CURHATIN</span>
+                </a>
+            </div>
+
+            <div class="app-header__actions">
+                <button class="topbar-hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                    <span class="material-icons-round">menu</span>
+                </button>
+            </div>
+        </header>
+
         <div class="admin-shell">
 
-            
+            <!-- Sidebar Kiri (Krem #F3E6D3) -->
             <aside class="admin-sidebar" id="adminSidebar">
-                <div class="sidebar-brand">
-                    <div class="sidebar-brand__icon">
-                        <span class="material-icons-round">favorite</span>
-                    </div>
-                    <span class="sidebar-brand__text">CURHATIN</span>
-                </div>
-
                 <nav class="sidebar-nav" role="navigation" aria-label="Menu Admin">
                     @yield('sidebar-nav')
                 </nav>
@@ -53,36 +59,17 @@
                         @csrf
                         <button type="submit" class="sidebar-footer__logout">
                             <span class="material-icons-round">logout</span>
-                            Keluar
+                            <span>Keluar</span>
                         </button>
                     </form>
                 </div>
             </aside>
 
-            
+            <!-- Overlay Mobile -->
             <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-            
+            <!-- Konten Utama (Putih #FFFFFF) -->
             <div class="admin-content">
-                <header class="admin-topbar">
-                    <div class="topbar-left">
-                        <button class="topbar-hamburger" id="hamburgerBtn" aria-label="Toggle menu">
-                            <span class="material-icons-round">menu</span>
-                        </button>
-                    </div>
-                    <div class="topbar-right">
-                        <div class="topbar-user">
-                            <div class="topbar-avatar">
-                                {{ strtoupper(substr(session('admin_nama', 'A'), 0, 1)) }}
-                            </div>
-                            <div>
-                                <div class="topbar-user__name">{{ session('admin_nama', 'Admin') }}</div>
-                                <div class="topbar-user__role">Administrator</div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-
                 <main class="page-content">
                     @yield('content')
                 </main>
@@ -90,7 +77,6 @@
 
         </div>
 
-        
         <script src="{{ asset('js/admin/sidebar.js') }}"></script>
     @endif
 
