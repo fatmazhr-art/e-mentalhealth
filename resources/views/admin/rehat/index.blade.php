@@ -1,6 +1,6 @@
 @extends('admin.layouts.base')
 
-@section('title', 'Rehat — CURHATIN Admin')
+@section('title', 'REHAT — CURHATIN Admin')
 @section('meta_description', 'Pemantauan kesehatan mental mahasiswa dan kesiagapan psikolog secara berkala')
 
 @section('sidebar-nav')
@@ -13,10 +13,10 @@
         <span>Asesmen DASS-21</span>
     </a>
     <a href="{{ route('admin.rehat.index') }}" class="sidebar-nav__item active">
-        <span class="material-icons-round">crop_square</span>
+        @include('admin.partials.icon-rehat')
         <span>Rehat</span>
     </a>
-    <a href="#" class="sidebar-nav__item">
+    <a href="{{ route('admin.forum.index') }}" class="sidebar-nav__item">
         <span class="material-icons-round">groups</span>
         <span>Forum Anonim</span>
     </a>
@@ -29,7 +29,6 @@
 @section('content')
 <div class="rehat-wrapper">
 
-    <!-- Header Section -->
     <div class="rehat-header">
         <div>
             <h1 class="rehat-header__title">REHAT</h1>
@@ -38,78 +37,64 @@
             </p>
         </div>
         <div>
-            <button class="btn-unggah" id="btnUnggahKonten">
+            <button type="button" class="btn-unggah" id="btnUnggahKonten" onclick="document.getElementById('modalUnggahMedia').classList.add('is-open'); document.body.style.overflow = 'hidden';">
                 <span class="material-icons-round">add</span>
                 <span>UNGGAH</span>
             </button>
         </div>
     </div>
 
-    <!-- Divider -->
     <hr class="rehat-divider">
 
-    <!-- Tabs & Search Row -->
     <div class="rehat-nav-row">
         <div class="rehat-tabs" role="tablist">
-            <a href="{{ route('admin.rehat.index', ['tab' => 'artikel']) }}" class="rehat-tab {{ $tab === 'artikel' ? 'active' : '' }}">
+            <a href="{{ route('admin.rehat.index', ['tab' => 'artikel']) }}"
+               class="rehat-tab {{ $tab === 'artikel' ? 'active' : '' }}">
                 Artikel & Tips
             </a>
-            <a href="{{ route('admin.rehat.index', ['tab' => 'audio']) }}" class="rehat-tab {{ $tab === 'audio' ? 'active' : '' }}">
+            <a href="{{ route('admin.rehat.index', ['tab' => 'audio']) }}"
+               class="rehat-tab {{ $tab === 'audio' ? 'active' : '' }}">
                 Musik/Audio
             </a>
-            <a href="{{ route('admin.rehat.index', ['tab' => 'video']) }}" class="rehat-tab {{ $tab === 'video' ? 'active' : '' }}">
+            <a href="{{ route('admin.rehat.index', ['tab' => 'video']) }}"
+               class="rehat-tab {{ $tab === 'video' ? 'active' : '' }}">
                 Video
             </a>
         </div>
 
         <div class="rehat-search">
             <span class="material-icons-round rehat-search__icon">search</span>
-            <input type="text" class="rehat-search__input" placeholder="Cari konten..." id="searchRehat">
+            <input type="text" class="rehat-search__input" id="searchRehat" autocomplete="off">
         </div>
     </div>
 
-    <!-- Outer Content Container -->
-    <div class="rehat-content-container">
-
-        @foreach($kontenList as $item)
-            <div class="rehat-card">
-                <!-- Thumbnail -->
-                <img src="{{ asset($item['gambar']) }}" alt="{{ $item['judul'] }}" class="rehat-card__thumb">
-
-                <!-- Body Content -->
-                <div class="rehat-card__body">
-                    <h3 class="rehat-card__title">{{ $item['judul'] }}</h3>
-                    <p class="rehat-card__desc">{{ $item['deskripsi'] }}</p>
-
-                    <div class="rehat-card__meta">
-                        <span>{{ $item['penulis'] }}</span>
-                        <span>{{ $item['views'] }}</span>
-                    </div>
-                </div>
-
-                <!-- Status Badge -->
-                <div class="rehat-card__badge {{ $item['status'] === 'Dipublikasi' ? 'rehat-card__badge--published' : 'rehat-card__badge--draft' }}">
-                    {{ $item['status'] }}
-                </div>
-
-                <!-- Actions -->
-                <div class="rehat-card__actions">
-                    @if($item['status'] === 'Draf')
-                        <button class="rehat-btn rehat-btn--terbitkan" onclick="alert('Konten berhasil diterbitkan!')">
-                            TERBITKAN
-                        </button>
-                    @endif
-                    <button class="rehat-btn rehat-btn--edit" onclick="alert('Fitur edit konten: {{ $item['judul'] }}')">
-                        EDIT
-                    </button>
-                    <button class="rehat-btn rehat-btn--hapus" onclick="confirm('Apakah Anda yakin ingin menghapus konten ini?')">
-                        HAPUS
-                    </button>
-                </div>
-            </div>
-        @endforeach
-
+    <div class="rehat-content-container" id="rehatCardsContainer">
+        @if($tab === 'artikel')
+            @forelse($artikel as $item)
+                @include('admin.rehat.partials.kartu-media', ['item' => $item, 'tipe' => 'artikel'])
+            @empty
+                <div class="rehat-empty">Belum ada artikel.</div>
+            @endforelse
+        @elseif($tab === 'audio')
+            @forelse($audio as $item)
+                @include('admin.rehat.partials.kartu-media', ['item' => $item, 'tipe' => 'audio'])
+            @empty
+                <div class="rehat-empty">Belum ada audio.</div>
+            @endforelse
+        @elseif($tab === 'video')
+            @forelse($video as $item)
+                @include('admin.rehat.partials.kartu-media', ['item' => $item, 'tipe' => 'video'])
+            @empty
+                <div class="rehat-empty">Belum ada video.</div>
+            @endforelse
+        @endif
     </div>
+
+    @include('admin.rehat.partials.modal-unggah')
 
 </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('js/admin/rehat.js') }}"></script>
+@endpush

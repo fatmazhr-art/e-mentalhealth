@@ -1,0 +1,184 @@
+/* ==========================================================================
+   CURHATIN Admin - Detail Dashboard Styles
+   Pixel-Perfect Implementation according to screenshot & specifications:
+   - Font: Poppins
+   - Colors from variables.css: Maroon #800020, Card #FFF9F2, Border #EDE3D8
+   ========================================================================== */
+
+.detail-dashboard-wrapper {
+    width: 100%;
+}
+
+/* ---- 1. Breadcrumb ---- */
+.detail-breadcrumb {
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.detail-breadcrumb a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.detail-breadcrumb a:hover {
+    color: var(--maroon-header);
+    text-decoration: underline;
+}
+
+.detail-breadcrumb .separator {
+    margin: 0 4px;
+    color: var(--text-primary);
+    font-weight: 400;
+}
+
+.detail-breadcrumb .current {
+    color: var(--maroon-header);
+    font-weight: 700;
+}
+
+/* ---- 2. Header Area ---- */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.detail-header__title {
+    font-family: var(--font-family);
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    margin: 0 0 6px 0;
+}
+
+.detail-header__subtitle {
+    font-family: var(--font-family);
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    max-width: 700px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--maroon-header);
+    color: #FFFFFF;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-export:hover {
+    background-color: #600018;
+    color: #FFFFFF;
+}
+
+.btn-export .material-icons-round {
+    font-size: 18px;
+}
+
+/* ---- 3. Baris Kontrol: Pills & Toggle ---- */
+.detail-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.category-pills {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-family: var(--font-family);
+    font-size: 13.5px;
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-pill.active {
+    background-color: var(--maroon-header);
+    color: #FFFFFF;
+    border: none;
+    padding: 6px 20px;
+    box-shadow: 0 3px 8px rgba(128, 0, 32, 0.35);
+}
+
+.category-pill:not(.active) {
+    background-color: #FFFFFF;
+    color: var(--maroon-header);
+    border: 1.5px solid var(--maroon-header);
+    padding: 5px 18px;
+}
+
+.category-pill:not(.active):hover {
+    background-color: rgba(128, 0, 32, 0.05);
+}
+
+.period-toggle {
+    display: inline-flex;
+    border: 1.5px solid var(--maroon-header);
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: #FFFFFF;
+}
+
+.period-btn {
+    padding: 6px 18px;
+    font-family: var(--font-family);
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.period-btn.active {
+    background-color: var(--maroon-header);
+    color: #FFFFFF;
+}
+
+.period-btn:not(.active) {
+    background-color: #FFFFFF;
+    color: var(--text-primary);
+    border-left: 1.5px solid var(--maroon-header);
+}
+
+.period-btn:not(.active):hover {
+    background-color: rgba(128, 0, 32, 0.05);
+}

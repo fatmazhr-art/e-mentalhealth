@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\AssessmentDummy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -11,49 +12,36 @@ class AdminAssesmenController extends Controller
 {
     /**
      * Tampilkan halaman Assesmen DASS-21.
-     * Tab default: konfigurasi soal.
+     * 
+     * KEAMANAN & PRIVASI:
+     * // TODO: Halaman ini menampilkan data kesehatan mental mahasiswa yang bersifat rahasia.
+     * // TODO: Akses wajib dibatasi untuk admin/psikolog yang berwenang (Role-Based Access Control / Permission).
+     * 
+     * Tab default: 'riwayat' ("Daftar Riwayat Asesmen").
      */
     public function index(Request $request)
     {
-        $tab = $request->get('tab', 'konfigurasi'); // 'riwayat' | 'konfigurasi'
+        $tab = $request->get('tab', 'riwayat'); // 'riwayat' | 'konfigurasi'
 
         // ---- KPI: Total Responden ----
-        $totalResponden = DB::table('Hasil_Assesmen')->count();
+        // TODO: ganti dengan penghitungan real dari database Hasil_Assesmen
+        $totalRespondenFormatted = AssessmentDummy::getTotalRespondenFormatted();
 
-        // ---- Soal DASS-21 (kategori: stres, cemas, depresi) ----
-        $soalDASS = DB::table('Soal')
-            ->whereIn('kategori', ['stres', 'cemas', 'depresi'])
-            ->orderBy('kategori')
-            ->orderBy('id_soal')
-            ->paginate(6, ['*'], 'soal_page');
+        // ---- Riwayat Assesmen Dummy Sesuai Desain Target ----
+        // TODO: ganti dengan query model / database Hasil_Assesmen
+        $riwayat = AssessmentDummy::getDummyHistory();
 
-        $jumlahDepresi  = DB::table('Soal')->where('kategori', 'depresi')->count();
-        $jumlahCemas    = DB::table('Soal')->where('kategori', 'cemas')->count();
-        $jumlahStres    = DB::table('Soal')->where('kategori', 'stres')->count();
-        $totalSoal      = $jumlahDepresi + $jumlahCemas + $jumlahStres;
-
-        // ---- Riwayat Assesmen ----
-        $riwayat = DB::table('Hasil_Assesmen')
-            ->join('Pengguna', 'Pengguna.id_user', '=', 'Hasil_Assesmen.id_user')
-            ->select(
-                'Hasil_Assesmen.*',
-                'Pengguna.nama',
-                'Pengguna.nama_anonim',
-                'Pengguna.prodi',
-                'Pengguna.jurusan'
-            )
-            ->orderByDesc('Hasil_Assesmen.tanggal')
-            ->paginate(10, ['*'], 'riwayat_page');
+        // ---- Konfigurasi Soal (Soal DASS-21 & Soal Penyebab) ----
+        // TODO: ganti dengan query model / database tabel Soal
+        $soalDass = AssessmentDummy::getDummySoalDass();
+        $soalPenyebab = AssessmentDummy::getDummySoalPenyebab();
 
         return view('admin.assesmen.index', compact(
             'tab',
-            'totalResponden',
-            'soalDASS',
-            'jumlahDepresi',
-            'jumlahCemas',
-            'jumlahStres',
-            'totalSoal',
-            'riwayat'
+            'totalRespondenFormatted',
+            'riwayat',
+            'soalDass',
+            'soalPenyebab'
         ));
     }
 

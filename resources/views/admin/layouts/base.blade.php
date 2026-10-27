@@ -40,6 +40,10 @@
             </div>
 
             <div class="app-header__actions">
+                <a href="{{ route('admin.profile') }}" class="topbar-profile" title="Profil Admin">
+                    <span class="topbar-profile__name">{{ in_array(session('admin_nama'), ['admin@gmail.com', 'Admin CURHATIN', null, '']) ? 'Theo James' : session('admin_nama') }}</span>
+                    <img src="{{ session('admin_foto', asset('images/admin/theo-james.png')) }}" alt="Theo James" class="topbar-profile__img">
+                </a>
                 <button class="topbar-hamburger" id="hamburgerBtn" aria-label="Toggle menu">
                     <span class="material-icons-round">menu</span>
                 </button>
@@ -48,20 +52,17 @@
 
         <div class="admin-shell">
 
-            <!-- Sidebar Kiri (Krem #F3E6D3) -->
+            <!-- Sidebar Kiri (Krem #FBF7F4) -->
             <aside class="admin-sidebar" id="adminSidebar">
                 <nav class="sidebar-nav" role="navigation" aria-label="Menu Admin">
                     @yield('sidebar-nav')
                 </nav>
 
                 <div class="sidebar-footer">
-                    <form method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <button type="submit" class="sidebar-footer__logout">
-                            <span class="material-icons-round">logout</span>
-                            <span>Keluar</span>
-                        </button>
-                    </form>
+                    <button type="button" class="sidebar-footer__logout" onclick="openLogoutModal()">
+                        <span class="material-icons-round">logout</span>
+                        <span>LOG OUT</span>
+                    </button>
                 </div>
             </aside>
 
@@ -76,6 +77,9 @@
             </div>
 
         </div>
+
+        <!-- Modal Konfirmasi Logout -->
+        @include('admin.partials.modal-logout')
 
         <script src="{{ asset('js/admin/sidebar.js') }}"></script>
     @endif

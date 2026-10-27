@@ -13,10 +13,10 @@
         <span>Asesmen DASS-21</span>
     </a>
     <a href="{{ route('admin.rehat.index') }}" class="sidebar-nav__item">
-        <span class="material-icons-round">crop_square</span>
+        @include('admin.partials.icon-rehat')
         <span>Rehat</span>
     </a>
-    <a href="#" class="sidebar-nav__item">
+    <a href="{{ route('admin.forum.index') }}" class="sidebar-nav__item">
         <span class="material-icons-round">groups</span>
         <span>Forum Anonim</span>
     </a>
@@ -64,20 +64,20 @@
         <div class="stat-cards-grid">
             <div class="stat-card">
                 <div class="stat-card__label">Kasus Berat</div>
-                <div class="stat-card__value">142</div>
-                <div class="stat-card__subtext stat-card__subtext--italic">12,5% dari 1.136 mahasiswa</div>
+                <div class="stat-card__value">{{ $currentDetailStat['kasus'] ?? '142' }}</div>
+                <div class="stat-card__subtext stat-card__subtext--italic">{{ $currentDetailStat['persen_label'] ?? '12,5% dari 1.136 mahasiswa' }}</div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-card__label">Tren</div>
-                <div class="stat-card__value">+ 28%</div>
-                <div class="stat-card__subtext stat-card__subtext--italic">Dipicu Tugas Akhir</div>
+                <div class="stat-card__value">{{ $currentDetailStat['tren'] ?? '+ 28%' }}</div>
+                <div class="stat-card__subtext stat-card__subtext--italic">{{ $currentDetailStat['tren_label'] ?? 'Dipicu Tugas Akhir' }}</div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-card__label">Kasus Berat</div>
-                <div class="stat-card__value">142</div>
-                <div class="stat-card__subtext stat-card__subtext--italic">12,5% dari 1.136 mahasiswa</div>
+                <div class="stat-card__value">{{ $currentDetailStat['kasus'] ?? '142' }}</div>
+                <div class="stat-card__subtext stat-card__subtext--italic">{{ $currentDetailStat['persen_label'] ?? '12,5% dari 1.136 mahasiswa' }}</div>
             </div>
         </div>
 
@@ -391,6 +391,20 @@
                                 </a>
                             </td>
                             <td class="kasus-value">84 (5.5%)</td>
+                            <td>
+                                <span class="trend-text--neutral">Stabil</span>
+                            </td>
+                            <td>
+                                <span class="status-badge status-badge--terkendali">Terkendali</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{{ route('admin.dashboard', ['view' => 'detail', 'jurusan' => 'Teknik Elektro']) }}" class="jurusan-name-link">
+                                    Teknik Elektro
+                                </a>
+                            </td>
+                            <td class="kasus-value">62 (4.5%)</td>
                             <td>
                                 <span class="trend-text--neutral">Stabil</span>
                             </td>

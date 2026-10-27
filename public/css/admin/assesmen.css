@@ -44,8 +44,8 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: #7A0C1E;
-    color: #FFFFFF;
+    background: var(--btn-upload-bg);
+    color: var(--btn-upload-text);
     padding: 10px 20px;
     border-radius: 6px;
     font-weight: 700;
@@ -54,15 +54,15 @@
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
-    box-shadow: 0 2px 6px rgba(122, 12, 30, 0.3);
+    box-shadow: 0 2px 6px rgba(128, 0, 30, 0.25);
     white-space: nowrap;
 }
 
 .btn-tambah:hover {
-    background: #600816;
+    background: var(--primary-hover);
     color: #FFFFFF;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(122, 12, 30, 0.4);
+    box-shadow: 0 4px 12px rgba(128, 0, 30, 0.35);
 }
 
 .btn-tambah .material-icons-round {
@@ -71,15 +71,15 @@
 
 /* ---- KPI Card (single) ---- */
 .kpi-single {
-    background: #F8F3EC;
-    border: 1.5px solid #E2D9CD;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 20px 28px;
     margin-bottom: 24px;
     display: inline-flex;
     flex-direction: column;
     min-width: 240px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow-card);
 }
 
 .kpi-single__label {
@@ -95,14 +95,14 @@
     font-size: 24px;
     font-weight: 900;
     font-style: italic;
-    color: #8B0E23;
+    color: var(--primary);
     letter-spacing: 0.5px;
 }
 
 /* ---- Tab Navigation ---- */
 .tab-nav {
     display: flex;
-    border-bottom: 2px solid #E2D9CD;
+    border-bottom: 2px solid var(--card-border);
     margin-bottom: 24px;
     gap: 0;
 }
@@ -125,23 +125,23 @@
 }
 
 .tab-nav__item:hover {
-    color: #8B0E23;
+    color: var(--primary);
 }
 
 .tab-nav__item.active {
-    color: #8B0E23;
-    border-bottom-color: #8B0E23;
+    color: var(--primary);
+    border-bottom-color: var(--tab-active-border);
     font-weight: 700;
 }
 
 /* ---- Section Card ---- */
 .assesmen-card {
-    background: #F8F3EC;
-    border: 1.5px solid #E2D9CD;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 18px;
     padding: 24px 28px;
     margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow-card);
 }
 
 .assesmen-card__title {

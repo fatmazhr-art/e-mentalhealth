@@ -53,6 +53,35 @@ class AdminDashboardController extends Controller
             ['jurusan' => 'Manajemen Bisnis',   'percent' => 35, 'class' => 'mb', 'color' => '#D47A88'],
         ];
 
+        // --- Data Stat Detail per Jurusan ---
+        $detailJurusanStats = [
+            'Teknik Informatika' => [
+                'kasus'        => '142',
+                'persen_label' => '12,5% dari 1.136 mahasiswa',
+                'tren'         => '+ 28%',
+                'tren_label'   => 'Dipicu Tugas Akhir',
+            ],
+            'Manajemen Bisnis' => [
+                'kasus'        => '98',
+                'persen_label' => '6,5% dari 1.508 mahasiswa',
+                'tren'         => '+ 14%',
+                'tren_label'   => 'Dipicu Stase',
+            ],
+            'Teknik Mesin' => [
+                'kasus'        => '84',
+                'persen_label' => '5,5% dari 1.527 mahasiswa',
+                'tren'         => 'Stabil',
+                'tren_label'   => 'Kondisi Terkendali',
+            ],
+            'Teknik Elektro' => [
+                'kasus'        => '62',
+                'persen_label' => '4,5% dari 1.378 mahasiswa',
+                'tren'         => 'Stabil',
+                'tren_label'   => 'Kondisi Terkendali',
+            ],
+        ];
+        $currentDetailStat = $detailJurusanStats[$jurusan] ?? $detailJurusanStats['Teknik Informatika'];
+
         return view('admin.dashboard.index', compact(
             'adminNama',
             'adminEmail',
@@ -64,7 +93,8 @@ class AdminDashboardController extends Controller
             'labelRataRata',
             'distribusi',
             'tabelJurusan',
-            'kasusAntarJurusan'
+            'kasusAntarJurusan',
+            'currentDetailStat'
         ));
     }
 
@@ -145,28 +175,28 @@ class AdminDashboardController extends Controller
                 'default_persen' => 12.5,
                 'default_tren'   => '+28% Tugas Akhir',
                 'default_status' => 'Perhatian Khusus',
-                'default_class'  => 'danger',
+                'default_class'  => 'perhatian',
             ],
             'Manajemen Bisnis' => [
                 'default_kasus'  => 98,
                 'default_persen' => 6.5,
                 'default_tren'   => '+14% (Stase)',
                 'default_status' => 'Waspada',
-                'default_class'  => 'warning',
+                'default_class'  => 'waspada',
             ],
             'Teknik Mesin' => [
                 'default_kasus'  => 84,
                 'default_persen' => 5.5,
                 'default_tren'   => 'Stabil',
                 'default_status' => 'Terkendali',
-                'default_class'  => 'success',
+                'default_class'  => 'terkendali',
             ],
             'Teknik Elektro' => [
                 'default_kasus'  => 62,
                 'default_persen' => 4.5,
                 'default_tren'   => 'Stabil',
                 'default_status' => 'Terkendali',
-                'default_class'  => 'success',
+                'default_class'  => 'terkendali',
             ],
         ];
 
@@ -202,13 +232,13 @@ class AdminDashboardController extends Controller
 
                 if ($persenBerat >= 10) {
                     $status = 'Perhatian Khusus';
-                    $statusClass = 'danger';
+                    $statusClass = 'perhatian';
                 } elseif ($persenBerat >= 5) {
                     $status = 'Waspada';
-                    $statusClass = 'warning';
+                    $statusClass = 'waspada';
                 } else {
                     $status = 'Terkendali';
-                    $statusClass = 'success';
+                    $statusClass = 'terkendali';
                 }
 
                 $result[] = (object) [
@@ -233,4 +263,51 @@ class AdminDashboardController extends Controller
 
         return $result;
     }
+
+    /**
+     * Tampilkan halaman detail per kategori DASS-21 (Depresi, Kecemasan, Stress).
+     */
+    public function detail(Request $request, $kategori)
+    {
+        $kategoriSlug = strtolower(trim($kategori));
+        $validKategori = [
+            'depresi'   => 'Depresi',
+            'kecemasan' => 'Kecemasan',
+            'stress'    => 'Stress',
+        ];
+
+        if (! array_key_exists($kategoriSlug, $validKategori)) {
+            return redirect()->route('admin.dashboard.detail', 'depresi');
+        }
+
+        $kategoriTitle = $validKategori[$kategoriSlug];
+        $periode       = $request->query('periode', '1 bulan');
+
+        $data = [
+            'kategori'      => $kategoriTitle,
+            'kategoriSlug'  => $kategoriSlug,
+            'periode'       => $periode,
+            'distribusi'    => [
+                ['label' => 'Normal',       'rentang' => '0 - 9',       'persen' => 55, 'warna' => '#9ACD00'],
+                ['label' => 'Ringan',       'rentang' => '10 - 13',     'persen' => 20, 'warna' => '#1A3FF0'],
+                ['label' => 'Sedang',       'rentang' => '14 - 20',     'persen' => 10, 'warna' => '#EBA100'],
+                ['label' => 'Berat',        'rentang' => '21 - 27',     'persen' => 15, 'warna' => '#E50000'],
+                ['label' => 'Sangat Berat', 'rentang' => '28 ke atas',  'persen' => 5,  'warna' => '#700000'],
+            ],
+            'tren'          => [
+                ['label' => 'Minggu 1', 'persen' => 16],
+                ['label' => 'Minggu 2', 'persen' => 20],
+                ['label' => 'Minggu 3', 'persen' => 24],
+                ['label' => 'Minggu 4', 'persen' => 30],
+            ],
+            'penyebab'      => [
+                ['label' => 'Tugas Akhir', 'persen' => 80],
+                ['label' => 'Magang',      'persen' => 50],
+                ['label' => 'UAS',         'persen' => 67],
+            ],
+        ];
+
+        return view('admin.dashboard.detail', $data);
+    }
 }
+

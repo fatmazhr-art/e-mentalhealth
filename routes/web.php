@@ -39,6 +39,7 @@ Route::prefix('admin')->middleware('admin.guest')->group(function () {
 // Admin - Authenticated Routes (sudah login)
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard/{kategori}', [AdminDashboardController::class, 'detail'])->name('admin.dashboard.detail');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
     // Assesmen DASS-21
@@ -51,4 +52,14 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
 
     // Rehat
     Route::get('/rehat',                 [AdminRehatController::class, 'index'])     ->name('admin.rehat.index');
+
+    // Forum Anonim
+    Route::get('/forum',                 [\App\Http\Controllers\Admin\AdminForumController::class, 'index'])->name('admin.forum.index');
+
+    // Profil Admin
+    Route::get('/profil',                 [\App\Http\Controllers\Admin\AdminProfileController::class, 'index'])->name('admin.profile');
+    Route::post('/profil',                [\App\Http\Controllers\Admin\AdminProfileController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::post('/profil/password',       [\App\Http\Controllers\Admin\AdminProfileController::class, 'updatePassword'])->name('admin.profile.password');
+    Route::post('/profil/foto',           [\App\Http\Controllers\Admin\AdminProfileController::class, 'updatePhoto'])->name('admin.profile.photo');
+    Route::delete('/profil/foto',         [\App\Http\Controllers\Admin\AdminProfileController::class, 'deletePhoto'])->name('admin.profile.photo.delete');
 });
