@@ -34,7 +34,7 @@ class AdminAuthController extends Controller
         ]);
 
         // Cari pengguna berdasarkan email dan role admin
-        $admin = DB::table('Pengguna')
+        $admin = DB::table('pengguna')
             ->where('email', $request->email)
             ->where('role', 'admin')
             ->first();

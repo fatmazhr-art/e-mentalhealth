@@ -20,17 +20,17 @@ class AdminDashboardController extends Controller
         $jurusan    = $request->query('jurusan', 'Teknik Informatika');
 
         // --- Statistik Utama ---
-        $totalPengguna = DB::table('Pengguna')->where('role', 'user')->count();
-        $totalAnonim   = DB::table('Pengguna')->where('role', 'user')
+        $totalPengguna = DB::table('pengguna')->where('role', 'user')->count();
+        $totalAnonim   = DB::table('pengguna')->where('role', 'user')
             ->whereNotNull('nama_anonim')->count();
         $persenAnonim  = $totalPengguna > 0
             ? round(($totalAnonim / $totalPengguna) * 100)
             : 0;
 
-        $totalSkrining = DB::table('Hasil_Assesmen')->count();
+        $totalSkrining = DB::table('hasil_assesmen')->count();
 
         // Rata-rata kategori hasil terbanyak
-        $rataKategori = DB::table('Hasil_Assesmen')
+        $rataKategori = DB::table('hasil_assesmen')
             ->select('kategori_hasil', DB::raw('COUNT(*) as jumlah'))
             ->groupBy('kategori_hasil')
             ->orderByDesc('jumlah')
@@ -108,7 +108,7 @@ class AdminDashboardController extends Controller
      */
     private function hitungDistribusiDASS(): array
     {
-        $total = DB::table('Hasil_Assesmen')->count();
+        $total = DB::table('hasil_assesmen')->count();
 
         if ($total === 0) {
             $kosong = [
@@ -157,7 +157,7 @@ class AdminDashboardController extends Controller
      */
     private function persenKolom(string $kolom, int $min, int $max, int $total): int
     {
-        $count = DB::table('Hasil_Assesmen')
+        $count = DB::table('hasil_assesmen')
             ->whereBetween($kolom, [$min, $max])
             ->count();
 
@@ -200,11 +200,11 @@ class AdminDashboardController extends Controller
             ],
         ];
 
-        $rows = DB::table('Hasil_Assesmen')
-            ->join('Pengguna', 'Pengguna.id_user', '=', 'Hasil_Assesmen.id_user')
-            ->whereIn('Pengguna.jurusan', array_keys($jurusanList))
+        $rows = DB::table('hasil_assesmen')
+            ->join('pengguna', 'pengguna.id_user', '=', 'hasil_assesmen.id_user')
+            ->whereIn('pengguna.jurusan', array_keys($jurusanList))
             ->select(
-                'Pengguna.jurusan',
+                'pengguna.jurusan',
                 DB::raw('COUNT(*) as total_skrining'),
                 DB::raw("SUM(CASE
                     WHEN skor_depresi >= 21 OR skor_cemas >= 15 OR skor_stress >= 26
@@ -212,7 +212,7 @@ class AdminDashboardController extends Controller
                 DB::raw("SUM(CASE WHEN kategori_penyebab = 'tugas_akhir' THEN 1 ELSE 0 END) as penyebab_ta"),
                 DB::raw("SUM(CASE WHEN kategori_penyebab = 'magang' THEN 1 ELSE 0 END) as penyebab_magang")
             )
-            ->groupBy('Pengguna.jurusan')
+            ->groupBy('pengguna.jurusan')
             ->get()
             ->keyBy('jurusan');
 

@@ -32,7 +32,7 @@ class AdminForgotPasswordController extends Controller
             'email.email'    => 'Format email tidak valid.',
         ]);
 
-        $admin = DB::table('Pengguna')
+        $admin = DB::table('pengguna')
             ->where('email', $request->email)
             ->where('role', 'admin')
             ->first();
@@ -47,7 +47,7 @@ class AdminForgotPasswordController extends Controller
         $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         // Simpan OTP (hash) dan masa berlaku 15 menit ke database
-        DB::table('Pengguna')
+        DB::table('pengguna')
             ->where('id_user', $admin->id_user)
             ->update([
                 'kode_otp'        => Hash::make($otp),
@@ -109,7 +109,7 @@ class AdminForgotPasswordController extends Controller
             'otp.size'     => 'Kode OTP harus berjumlah 6 digit.',
         ]);
 
-        $admin = DB::table('Pengguna')
+        $admin = DB::table('pengguna')
             ->where('email', $email)
             ->where('role', 'admin')
             ->first();
@@ -146,7 +146,7 @@ class AdminForgotPasswordController extends Controller
                 ->with('error', 'Sesi telah kedaluwarsa. Silakan masukkan email Anda kembali.');
         }
 
-        $admin = DB::table('Pengguna')
+        $admin = DB::table('pengguna')
             ->where('email', $email)
             ->where('role', 'admin')
             ->first();
@@ -159,7 +159,7 @@ class AdminForgotPasswordController extends Controller
         // Generate OTP baru
         $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        DB::table('Pengguna')
+        DB::table('pengguna')
             ->where('id_user', $admin->id_user)
             ->update([
                 'kode_otp'        => Hash::make($otp),
@@ -219,7 +219,7 @@ class AdminForgotPasswordController extends Controller
         ]);
 
         // Update password dan bersihkan kode OTP
-        DB::table('Pengguna')
+        DB::table('pengguna')
             ->where('email', $email)
             ->where('role', 'admin')
             ->update([

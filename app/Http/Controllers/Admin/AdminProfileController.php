@@ -19,11 +19,11 @@ class AdminProfileController extends Controller
         $admin = null;
 
         if ($adminId) {
-            $admin = DB::table('Pengguna')->where('id_user', $adminId)->first();
+            $admin = DB::table('pengguna')->where('id_user', $adminId)->first();
         }
 
         if (!$admin) {
-            $admin = DB::table('Pengguna')->where('role', 'admin')->first();
+            $admin = DB::table('pengguna')->where('role', 'admin')->first();
         }
 
         // Data admin default sesuai desain target (Theo James)
@@ -63,7 +63,7 @@ class AdminProfileController extends Controller
         $adminId = Session::get('admin_id');
 
         if ($adminId) {
-            DB::table('Pengguna')->where('id_user', $adminId)->update([
+            DB::table('pengguna')->where('id_user', $adminId)->update([
                 'nama'  => $request->nama,
                 'email' => $request->email,
             ]);
@@ -95,14 +95,14 @@ class AdminProfileController extends Controller
         ]);
 
         $adminId = Session::get('admin_id');
-        $admin = $adminId ? DB::table('Pengguna')->where('id_user', $adminId)->first() : null;
+        $admin = $adminId ? DB::table('pengguna')->where('id_user', $adminId)->first() : null;
 
         if ($admin && !Hash::check($request->current_password, $admin->kata_sandi)) {
             return back()->withErrors(['current_password' => 'Kata sandi saat ini tidak sesuai.']);
         }
 
         if ($adminId) {
-            DB::table('Pengguna')->where('id_user', $adminId)->update([
+            DB::table('pengguna')->where('id_user', $adminId)->update([
                 'kata_sandi' => Hash::make($request->password),
             ]);
         }

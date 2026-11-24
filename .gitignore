@@ -26,6 +26,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 summary.md
-.gitignore
 CLAUDE.md
 AGENTS.md
+*.sql

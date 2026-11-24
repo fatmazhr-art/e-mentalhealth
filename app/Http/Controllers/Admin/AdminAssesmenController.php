@@ -12,11 +12,11 @@ class AdminAssesmenController extends Controller
 {
     /**
      * Tampilkan halaman Assesmen DASS-21.
-     * 
+     *
      * KEAMANAN & PRIVASI:
      * // TODO: Halaman ini menampilkan data kesehatan mental mahasiswa yang bersifat rahasia.
      * // TODO: Akses wajib dibatasi untuk admin/psikolog yang berwenang (Role-Based Access Control / Permission).
-     * 
+     *
      * Tab default: 'riwayat' ("Daftar Riwayat Asesmen").
      */
     public function index(Request $request)
@@ -66,7 +66,7 @@ class AdminAssesmenController extends Controller
 
         $adminId = Session::get('admin_id');
 
-        DB::table('Soal')->insert([
+        DB::table('soal')->insert([
             'id_user'    => $adminId,
             'pertanyaan' => $request->pertanyaan,
             'kategori'   => $request->kategori,
@@ -82,7 +82,7 @@ class AdminAssesmenController extends Controller
      */
     public function edit(int $id)
     {
-        $soal = DB::table('Soal')->where('id_soal', $id)->firstOrFail();
+        $soal = DB::table('soal')->where('id_soal', $id)->firstOrFail();
         return view('admin.assesmen.edit', compact('soal'));
     }
 
@@ -97,7 +97,7 @@ class AdminAssesmenController extends Controller
             'bobot'      => 'required|integer|min:1|max:5',
         ]);
 
-        DB::table('Soal')->where('id_soal', $id)->update([
+        DB::table('soal')->where('id_soal', $id)->update([
             'pertanyaan' => $request->pertanyaan,
             'kategori'   => $request->kategori,
             'bobot'      => $request->bobot,
@@ -112,7 +112,7 @@ class AdminAssesmenController extends Controller
      */
     public function destroy(int $id)
     {
-        DB::table('Soal')->where('id_soal', $id)->delete();
+        DB::table('soal')->where('id_soal', $id)->delete();
 
         return redirect()->route('admin.assesmen.index', ['tab' => 'konfigurasi'])
             ->with('success', 'Soal berhasil dihapus.');
