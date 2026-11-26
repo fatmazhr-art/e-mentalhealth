@@ -37,6 +37,32 @@
         </p>
     </div>
 
+    <!-- Alert Flash & Validasi -->
+    @if (session('success'))
+        <div style="background-color: #D4EDDA; border: 1px solid #C3E6CB; color: #155724; padding: 12px 18px; border-radius: 10px; margin-bottom: 18px; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+            <span class="material-icons-round" style="font-size: 18px;">check_circle</span>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div style="background-color: #F8D7DA; border: 1px solid #F5C6CB; color: #721C24; padding: 12px 18px; border-radius: 10px; margin-bottom: 18px; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+            <span class="material-icons-round" style="font-size: 18px;">error</span>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div style="background-color: #F8D7DA; border: 1px solid #F5C6CB; color: #721C24; padding: 12px 18px; border-radius: 10px; margin-bottom: 18px; font-weight: 500; font-size: 13.5px;">
+            <div style="font-weight: 700; margin-bottom: 4px;">Terjadi kesalahan input:</div>
+            <ul style="margin: 0; padding-left: 20px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <!-- Underline Navigation Tabs -->
     <div class="forum-nav-tabs-wrapper">
         <nav class="forum-nav-tabs" role="tablist">
@@ -44,7 +70,7 @@
                class="forum-nav-tab {{ $tab === 'antrean' ? 'is-active' : '' }}"
                role="tab">
                 <span>Antrean Laporan</span>
-                <span class="forum-tab-badge">7</span>
+                <span class="forum-tab-badge">{{ $stats['laporan_baru'] }}</span>
             </a>
             <a href="{{ route('admin.forum.index', ['tab' => 'semua-konten']) }}"
                class="forum-nav-tab {{ $tab === 'semua-konten' ? 'is-active' : '' }}"
@@ -71,11 +97,11 @@
                 <span class="forum-stat-card__value">{{ $stats['konten_beresiko'] }}</span>
             </div>
             <div class="forum-stat-card">
-                <span class="forum-stat-card__label">Dihapus Hari Ini</span>
+                <span class="forum-stat-card__label">Konten Dihapus</span>
                 <span class="forum-stat-card__value">{{ $stats['dihapus_hari_ini'] }}</span>
             </div>
             <div class="forum-stat-card">
-                <span class="forum-stat-card__label">Pengguna Dimute</span>
+                <span class="forum-stat-card__label">Pengguna Dibatasi</span>
                 <span class="forum-stat-card__value">{{ $stats['pengguna_dimute'] }}</span>
             </div>
         </div>
@@ -96,7 +122,7 @@
 
                 <!-- Daftar Kartu Laporan -->
                 <div class="forum-queue-list" id="queueList">
-                    @foreach($antreanLaporan as $index => $item)
+                    @forelse($antreanLaporan as $index => $item)
                         <div class="forum-queue-card {{ $index === 0 ? 'is-selected' : '' }}"
                              data-id="{{ $item['id'] }}"
                              data-kategori="{{ $item['kategori_slug'] }}"
@@ -112,57 +138,125 @@
                                 {{ $item['penulis'] }} <span>· {{ $item['komunitas'] }}</span>
                             </h3>
                             <p class="forum-queue-card__snippet">{{ $item['isi'] }}</p>
-                            <span class="forum-queue-card__footer">{{ $item['jumlah_laporan'] }}</span>
+                            <span class="forum-queue-card__footer">
+                                {{ $item['jumlah_laporan'] }} · {{ ucfirst($item['status_laporan']) }}
+                            </span>
                         </div>
-                    @endforeach
+                    @empty
+                        <p style="font-size: 13px; color: #6B7280; text-align: center; padding: 20px 8px; margin: 0;">
+                            Belum ada laporan konten yang masuk.
+                        </p>
+                    @endforelse
                 </div>
             </aside>
 
             <!-- Kolom Kanan: Detail Moderasi -->
             <main class="forum-detail-panel" id="detailPanel">
-                <h2 class="forum-detail-panel__title" id="detailTitle">Komentar Dilaporkan</h2>
-                <p class="forum-detail-panel__subtitle" id="detailSubtitle">
-                    Menunggu tindakan · 4 laporan (3 ancaman, 1 perundungan)
-                </p>
-
-                <div class="forum-detail-divider"></div>
-
-                <h3 class="forum-detail-section-label" id="detailSectionLabel">Konteks Postingan</h3>
-
-                <!-- Kartu Postingan Utama -->
-                <div class="forum-context-post" id="detailPostBox">
-                    <div class="forum-context-post__header">
-                        <strong id="postAuthor">Anonim 345</strong>
-                        <span id="postMeta">25 Menit yang lalu - Magang Dan Dunia Kerja</span>
-                    </div>
-                    <p class="forum-context-post__content" id="postContent">
-                        Hari ketiga magang dan aku masih takut bertanya ke mentor. Rasanya semua orang sudah paham, cuma aku yang bingung. Ada yang pernah merasa begini juga?
+                @if(!empty($antreanLaporan))
+                    @php $firstItem = $antreanLaporan[0]; @endphp
+                    <h2 class="forum-detail-panel__title" id="detailTitle">
+                        {{ $firstItem['jenis'] === 'Komentar' ? 'Komentar Dilaporkan' : 'Postingan Dilaporkan' }}
+                    </h2>
+                    <p class="forum-detail-panel__subtitle" id="detailSubtitle">
+                        {{ $firstItem['sub_laporan'] }}
                     </p>
-                </div>
 
-                <!-- Box Komentar Dilaporkan (Nested Merah) -->
-                <div class="forum-context-comment" id="detailCommentBox">
-                    <div class="forum-context-comment__header">
-                        <strong id="commentAuthor">Anonim 123</strong>
-                        <span id="commentMeta">11.20 Membalas Anonim 345</span>
+                    <div class="forum-detail-divider"></div>
+
+                    <h3 class="forum-detail-section-label" id="detailSectionLabel">Konteks Postingan</h3>
+
+                    <!-- Kartu Postingan Utama -->
+                    <div class="forum-context-post" id="detailPostBox">
+                        <div class="forum-context-post__header">
+                            <strong id="postAuthor">{{ $firstItem['post_konteks']['penulis'] }}</strong>
+                            <span id="postMeta">{{ $firstItem['post_konteks']['waktu'] }} - {{ $firstItem['post_konteks']['komunitas'] }}</span>
+                        </div>
+                        <p class="forum-context-post__content" id="postContent">
+                            {{ $firstItem['post_konteks']['isi'] }}
+                        </p>
                     </div>
-                    <div class="forum-comment-quote-box">
-                        <span id="commentContent">Liat aja nanti, aku cari tahu kamu siapa.</span>
+
+                    <!-- Box Komentar Dilaporkan (Nested Merah) -->
+                    <div class="forum-context-comment" id="detailCommentBox" style="{{ $firstItem['komentar_konteks'] ? '' : 'display: none;' }}">
+                        <div class="forum-context-comment__header">
+                            <strong id="commentAuthor">{{ $firstItem['komentar_konteks']['penulis'] ?? '' }}</strong>
+                            <span id="commentMeta">
+                                {{ $firstItem['komentar_konteks'] ? ($firstItem['komentar_konteks']['waktu'] . ' Membalas ' . $firstItem['komentar_konteks']['membalas']) : '' }}
+                            </span>
+                        </div>
+                        <div class="forum-comment-quote-box">
+                            <span id="commentContent">{{ $firstItem['komentar_konteks']['isi'] ?? '' }}</span>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Riwayat Catatan Moderasi -->
-                <p class="forum-history-note" id="detailHistoryNote">
-                    Riwayat akun Singa Malam: 1 peringatan, belum pernah di-mute. Identitas asli tidak ditampilkan kepada moderator.
-                </p>
+                    <!-- Riwayat Catatan Moderasi -->
+                    <p class="forum-history-note" id="detailHistoryNote">
+                        {{ $firstItem['riwayat'] }}
+                    </p>
 
-                <!-- Tombol Aksi Moderasi -->
-                <div class="forum-detail-actions">
-                    <button type="button" class="btn-mod-outline" onclick="abaikanLaporan()">Abaikan Laporan</button>
-                    <button type="button" class="btn-mod-outline" onclick="muteUser(24)">Mute 24 Jam</button>
-                    <button type="button" class="btn-mod-outline" onclick="peringatkanAkun()">Peringatkan Akun</button>
-                    <button type="button" class="btn-mod-danger" id="btnHapusAction" onclick="openHapusKomentarModal()">HAPUS KOMENTAR</button>
-                </div>
+                    <!-- Tombol Aksi Moderasi -->
+                    <div class="forum-detail-actions">
+                        <form id="formTolakLaporan" method="POST" action="{{ route('admin.forum.laporan.tolak', $firstItem['id_post']) }}" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn-mod-outline" id="btnTolakLaporan"
+                                    style="{{ $firstItem['status_laporan'] === 'menunggu' ? '' : 'display: none;' }}"
+                                    onclick="return confirm('Tolak semua laporan menunggu untuk konten ini?')">
+                                Tolak Laporan
+                            </button>
+                        </form>
+
+                        <form id="formTindakLaporan" method="POST" action="{{ route('admin.forum.laporan.tindak', $firstItem['id_post']) }}" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn-mod-outline" id="btnTindakLaporan"
+                                    style="{{ $firstItem['status_laporan'] === 'menunggu' ? '' : 'display: none;' }}">
+                                Tandai Ditindak
+                            </button>
+                        </form>
+
+                        <form id="formMuteLaporan" method="POST" action="{{ route('admin.forum.sanksi.store') }}" style="display:inline;">
+                            @csrf
+                            <input type="hidden" name="id_user" id="muteInputUser" value="{{ $firstItem['id_user'] }}">
+                            <input type="hidden" name="id_laporan" id="muteInputLaporan" value="{{ $firstItem['id_laporan'] }}">
+                            <input type="hidden" name="jenis" value="mute">
+                            <input type="hidden" name="durasi_jam" value="24">
+                            <input type="hidden" name="alasan" id="muteInputAlasan" value="{{ $firstItem['kategori'] }}">
+                            <button type="submit" class="btn-mod-outline" onclick="return confirm('Mute akun ini selama 24 jam?')">
+                                Mute 24 Jam
+                            </button>
+                        </form>
+
+                        <form id="formPeringatkanLaporan" method="POST" action="{{ route('admin.forum.sanksi.store') }}" style="display:inline;">
+                            @csrf
+                            <input type="hidden" name="id_user" id="peringatanInputUser" value="{{ $firstItem['id_user'] }}">
+                            <input type="hidden" name="id_laporan" id="peringatanInputLaporan" value="{{ $firstItem['id_laporan'] }}">
+                            <input type="hidden" name="jenis" value="peringatan">
+                            <input type="hidden" name="alasan" id="peringatanInputAlasan" value="{{ $firstItem['kategori'] }}">
+                            <button type="submit" class="btn-mod-outline" onclick="return confirm('Berikan peringatan resmi ke akun ini?')">
+                                Peringatkan Akun
+                            </button>
+                        </form>
+
+                        <button type="button" class="btn-mod-danger" id="btnHapusAction"
+                                style="{{ $firstItem['status_konten'] === 'dihapus' ? 'display: none;' : '' }}"
+                                onclick="openHapusAntreanModal()">
+                            {{ $firstItem['jenis'] === 'Komentar' ? 'HAPUS KOMENTAR' : 'HAPUS POSTINGAN' }}
+                        </button>
+
+                        <form id="formPulihkanAntrean" method="POST" action="{{ route('admin.forum.posts.pulihkan', $firstItem['id_post']) }}" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn-mod-outline" id="btnPulihkanAction"
+                                    style="{{ $firstItem['status_konten'] === 'dihapus' ? '' : 'display: none;' }}"
+                                    onclick="return confirm('Pulihkan konten ini ke status aktif?')">
+                                PULIHKAN KONTEN
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <h2 class="forum-detail-panel__title">Antrean Laporan Kosong</h2>
+                    <p class="forum-detail-panel__subtitle">
+                        Tidak ada laporan konten yang perlu ditinjau saat ini.
+                    </p>
+                @endif
             </main>
 
         </div>
@@ -172,32 +266,37 @@
         <div class="forum-semua-konten-container">
 
             <!-- Filter Toolbar -->
-            <div class="forum-filter-toolbar">
+            <form method="GET" action="{{ route('admin.forum.index') }}" class="forum-filter-toolbar">
+                <input type="hidden" name="tab" value="semua-konten">
                 <div class="forum-search-box">
                     <input type="text"
+                           name="search"
+                           value="{{ $filters['search'] ?? '' }}"
                            class="forum-search-box__input"
                            id="searchKontenInput"
-                           placeholder="Cari isi konten atau nama samaran..."
-                           oninput="filterKontenTable()">
+                           placeholder="Cari isi konten atau nama samaran...">
                 </div>
-                <select class="forum-filter-select" id="filterJenis" onchange="filterKontenTable()">
+                <select name="jenis" class="forum-filter-select" id="filterJenis" onchange="this.form.submit()">
                     <option value="">Semua jenis</option>
-                    <option value="Postingan">Postingan</option>
-                    <option value="Komentar">Komentar</option>
+                    <option value="Postingan" {{ ($filters['jenis'] ?? '') === 'Postingan' ? 'selected' : '' }}>Postingan</option>
+                    <option value="Komentar" {{ ($filters['jenis'] ?? '') === 'Komentar' ? 'selected' : '' }}>Komentar</option>
                 </select>
-                <select class="forum-filter-select" id="filterKomunitas" onchange="filterKontenTable()">
+                <select name="id_komunitas" class="forum-filter-select" id="filterKomunitas" onchange="this.form.submit()">
                     <option value="">Semua komunitas</option>
-                    <option value="Magang & Dunia Kerja">Magang & Dunia Kerja</option>
-                    <option value="Self-Growth">Self-Growth</option>
+                    @foreach($komunitasList as $kom)
+                        <option value="{{ $kom->id_komunitas }}" {{ (string) ($filters['id_komunitas'] ?? '') === (string) $kom->id_komunitas ? 'selected' : '' }}>
+                            {{ $kom->nama }}
+                        </option>
+                    @endforeach
                 </select>
-                <select class="forum-filter-select" id="filterStatus" onchange="filterKontenTable()">
+                <select name="status" class="forum-filter-select" id="filterStatus" onchange="this.form.submit()">
                     <option value="">Semua status</option>
-                    <option value="Aktif">Aktif</option>
-                    <option value="Dilaporkan">Dilaporkan</option>
-                    <option value="Berisiko">Berisiko</option>
-                    <option value="Dihapus">Dihapus</option>
+                    <option value="aktif" {{ ($filters['status'] ?? '') === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                    <option value="dilaporkan" {{ ($filters['status'] ?? '') === 'dilaporkan' ? 'selected' : '' }}>Dilaporkan</option>
+                    <option value="berisiko" {{ ($filters['status'] ?? '') === 'berisiko' ? 'selected' : '' }}>Berisiko</option>
+                    <option value="dihapus" {{ ($filters['status'] ?? '') === 'dihapus' ? 'selected' : '' }}>Dihapus</option>
                 </select>
-            </div>
+            </form>
 
             <!-- Tabel Konten -->
             <div class="forum-table-responsive">
@@ -214,7 +313,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($semuaKonten as $row)
+                        @forelse($semuaKonten as $row)
                             <tr class="forum-table-row" data-jenis="{{ $row['jenis'] }}" data-komunitas="{{ $row['komunitas'] }}" data-status="{{ $row['status'] }}">
                                 <td>
                                     <span class="forum-badge-pill forum-badge-pill--type">{{ $row['jenis'] }}</span>
@@ -254,29 +353,61 @@
                                             @if($row['jenis'] === 'Postingan')
                                                 <button type="button" class="table-action-link" onclick="openHapusPostById({{ $row['id'] }})">Hapus</button>
                                             @else
-                                                <button type="button" class="table-action-link" onclick="openHapusKomentarModalWithData('{{ $row['penulis'] }}', '{{ $row['waktu'] }}', '{{ addslashes($row['isi']) }}')">Hapus</button>
+                                                <button type="button" class="table-action-link" onclick="openHapusKomentarById({{ $row['id'] }})">Hapus</button>
                                             @endif
                                         @endif
                                         @if(in_array('pulihkan', $row['aksi']))
-                                            <button type="button" class="table-action-link" onclick="alert('Konten berhasil dipulihkan!')">Pulihkan</button>
+                                            <form method="POST" action="{{ route('admin.forum.posts.pulihkan', $row['id_post']) }}" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="table-action-link" onclick="return confirm('Pulihkan konten ini ke status aktif?')">Pulihkan</button>
+                                            </form>
                                         @endif
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #6B7280; padding: 24px;">
+                                    Belum ada konten forum yang sesuai filter.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
             <!-- Pagination Footer -->
             <div class="forum-pagination-footer">
-                <span class="forum-pagination-info">Menampilkan 1-6 dari 1.284 konten</span>
-                <div class="forum-pagination-btns">
-                    <button type="button" class="forum-page-btn is-active">1</button>
-                    <button type="button" class="forum-page-btn">2</button>
-                    <button type="button" class="forum-page-btn">3</button>
-                    <button type="button" class="forum-page-btn">›</button>
-                </div>
+                <span class="forum-pagination-info">
+                    @if($semuaKontenPaginator->total() > 0)
+                        Menampilkan {{ $semuaKontenPaginator->firstItem() }}-{{ $semuaKontenPaginator->lastItem() }} dari {{ $semuaKontenPaginator->total() }} konten
+                    @else
+                        Menampilkan 0 dari 0 konten
+                    @endif
+                </span>
+                @if($semuaKontenPaginator->hasPages())
+                    <div class="forum-pagination-btns">
+                        @if($semuaKontenPaginator->onFirstPage())
+                            <span class="forum-page-btn" style="opacity: 0.4; pointer-events: none;">‹</span>
+                        @else
+                            <a href="{{ $semuaKontenPaginator->previousPageUrl() }}" class="forum-page-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">‹</a>
+                        @endif
+
+                        @for($page = 1; $page <= $semuaKontenPaginator->lastPage(); $page++)
+                            <a href="{{ $semuaKontenPaginator->url($page) }}"
+                               class="forum-page-btn {{ $page === $semuaKontenPaginator->currentPage() ? 'is-active' : '' }}"
+                               style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                {{ $page }}
+                            </a>
+                        @endfor
+
+                        @if($semuaKontenPaginator->hasMorePages())
+                            <a href="{{ $semuaKontenPaginator->nextPageUrl() }}" class="forum-page-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">›</a>
+                        @else
+                            <span class="forum-page-btn" style="opacity: 0.4; pointer-events: none;">›</span>
+                        @endif
+                    </div>
+                @endif
             </div>
 
         </div>
@@ -313,7 +444,6 @@
                 <select class="forum-filter-select" id="filterDibatasiStatus" onchange="filterDibatasiTable()">
                     <option value="">Semua status</option>
                     <option value="Mute">Mute</option>
-                    <option value="Peringatan">Peringatan</option>
                     <option value="Diblokir">Diblokir</option>
                 </select>
             </div>
@@ -332,7 +462,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($penggunaDibatasi as $user)
+                        @forelse($penggunaDibatasi as $user)
                             <tr class="forum-dibatasi-row" data-nama="{{ $user['nama'] }}" data-status="{{ $user['status'] }}">
                                 <td>
                                     <span class="forum-table-author">{{ $user['nama'] }}</span>
@@ -340,10 +470,6 @@
                                 <td>
                                     @if($user['status_type'] === 'mute')
                                         <span class="forum-badge-pill forum-badge-pill--mute">{{ $user['status'] }}</span>
-                                    @elseif($user['status_type'] === 'warning-2')
-                                        <span class="forum-badge-pill forum-badge-pill--warning-2">{{ $user['status'] }}</span>
-                                    @elseif($user['status_type'] === 'warning-1')
-                                        <span class="forum-badge-pill forum-badge-pill--warning-1">{{ $user['status'] }}</span>
                                     @elseif($user['status_type'] === 'blocked')
                                         <span class="forum-badge-pill forum-badge-pill--blocked">{{ $user['status'] }}</span>
                                     @endif
@@ -355,7 +481,10 @@
                                     <div class="forum-table-actions-inline">
                                         @foreach($user['aksi'] as $action)
                                             @if($action === 'Cabut')
-                                                <button type="button" class="table-action-link" onclick="cabutPembatasan('{{ $user['nama'] }}')">Cabut</button>
+                                                <form method="POST" action="{{ route('admin.forum.sanksi.cabut', $user['id_sanksi']) }}" style="display:inline;">
+                                                    @csrf
+                                                    <button type="submit" class="table-action-link" onclick="return confirm('Cabut pembatasan aktif untuk akun {{ addslashes($user['nama']) }}?')">Cabut</button>
+                                                </form>
                                             @else
                                                 <button type="button" class="table-action-link" onclick="openKelolaById({{ $user['id'] }}, '{{ $action }}')">{{ $action }}</button>
                                             @endif
@@ -363,7 +492,13 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #6B7280; padding: 24px;">
+                                    Tidak ada pengguna dengan sanksi mute atau blokir yang sedang aktif.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -377,7 +512,7 @@
 </div>
 
 <!-- ==========================================================================
-     MODAL 4: KELOLA PEMBATASAN (SESUAI GAMBAR 2 TERBARU)
+     MODAL 4: KELOLA PEMBATASAN (TAB 3)
      ========================================================================== -->
 <div class="forum-modal-backdrop" id="modalKelolaPembatasan" style="display: none;" onclick="if(event.target === this) closeKelolaPembatasanModal()">
     <div class="forum-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalKelolaTitle">
@@ -388,58 +523,62 @@
         <!-- User Info Box -->
         <div class="forum-kelola-user-box">
             <div class="forum-kelola-user-box__top">
-                <span class="forum-kelola-user-box__name" id="kelolaUserName">Singa Malam</span>
-                <span class="forum-badge-pill forum-badge-pill--mute" id="kelolaUserStatus">Mute 24 jam</span>
+                <span class="forum-kelola-user-box__name" id="kelolaUserName">-</span>
+                <span class="forum-badge-pill forum-badge-pill--mute" id="kelolaUserStatus">-</span>
             </div>
-            <p class="forum-kelola-user-box__sub" id="kelolaUserSub">
-                Alasan: Ancaman · sisa 18 jam · 1 peringatan sebelumnya
-            </p>
+            <p class="forum-kelola-user-box__sub" id="kelolaUserSub">-</p>
         </div>
 
-        <!-- Tindakan -->
-        <h3 class="forum-modal-section-title">Tindakan</h3>
-        <div class="forum-modal-pills" id="kelolaTindakanPills">
-            <button type="button" class="forum-modal-pill" onclick="selectKelolaTindakan(this, 'Cabut pembatasan')">Cabut pembatasan</button>
-            <button type="button" class="forum-modal-pill is-selected" onclick="selectKelolaTindakan(this, 'Perpanjang mute')">Perpanjang mute</button>
-            <button type="button" class="forum-modal-pill" onclick="selectKelolaTindakan(this, 'Blokir 7 hari')">Blokir 7 hari</button>
-            <button type="button" class="forum-modal-pill" onclick="selectKelolaTindakan(this, 'Blokir permanen')">Blokir permanen</button>
-        </div>
+        <form id="formKelolaPembatasan" method="POST" action="{{ route('admin.forum.sanksi.store') }}">
+            @csrf
+            <input type="hidden" name="id_user" id="kelolaInputUserId" value="">
+            <input type="hidden" name="jenis" id="kelolaInputJenis" value="mute">
 
-        <!-- Durasi -->
-        <h3 class="forum-modal-section-title">Durasi</h3>
-        <select class="forum-modal-select" id="kelolaDurasiSelect">
-            <option value="24 jam" selected>24 jam</option>
-            <option value="3 hari">3 hari</option>
-            <option value="7 hari">7 hari</option>
-            <option value="30 hari">30 hari</option>
-            <option value="Permanen">Permanen</option>
-        </select>
-
-        <!-- Alasan (dicatat di riwayat moderasi) -->
-        <h3 class="forum-modal-section-title">Alasan (dicatat di riwayat moderasi)</h3>
-        <textarea class="forum-modal-textarea" id="kelolaAlasanInput" placeholder="Tulis alasan tindakan"></textarea>
-
-        <!-- Pesan ke pengguna -->
-        <h3 class="forum-modal-section-title">Pesan ke pengguna</h3>
-        <textarea class="forum-modal-textarea" id="kelolaPesanInput">Aksesmu dibatasi lagi karena pelanggaran aturan forum. Mohon jaga forum tetap aman.</textarea>
-
-        <!-- Callout Kuning -->
-        <div class="forum-modal-warning-box" id="kelolaWarningBox">
-            Blokir permanen sebaiknya ditinjau dulu sebelum diterapkan.
-        </div>
-
-        <!-- Footer -->
-        <div class="forum-modal-footer">
-            <div class="forum-modal-footer__actions">
-                <button type="button" class="btn-modal-cancel btn-modal-cancel--maroon" onclick="closeKelolaPembatasanModal()">Batal</button>
-                <button type="button" class="btn-modal-apply" onclick="confirmKelolaPembatasan()">Terapkan</button>
+            <!-- Tindakan -->
+            <h3 class="forum-modal-section-title">Tindakan</h3>
+            <div class="forum-modal-pills" id="kelolaTindakanPills">
+                <button type="button" class="forum-modal-pill" onclick="selectKelolaTindakan(this, 'Cabut pembatasan')">Cabut pembatasan</button>
+                <button type="button" class="forum-modal-pill is-selected" onclick="selectKelolaTindakan(this, 'Perpanjang mute')">Perpanjang mute</button>
+                <button type="button" class="forum-modal-pill" onclick="selectKelolaTindakan(this, 'Blokir 7 hari')">Blokir 7 hari</button>
+                <button type="button" class="forum-modal-pill" onclick="selectKelolaTindakan(this, 'Blokir permanen')">Blokir permanen</button>
             </div>
-        </div>
+
+            <!-- Durasi -->
+            <div id="kelolaDurasiWrapper">
+                <h3 class="forum-modal-section-title">Durasi</h3>
+                <select class="forum-modal-select" name="durasi_jam" id="kelolaDurasiSelect">
+                    <option value="24" selected>24 jam</option>
+                    <option value="72">3 hari</option>
+                    <option value="168">7 hari</option>
+                    <option value="720">30 hari</option>
+                    <option value="">Permanen</option>
+                </select>
+            </div>
+
+            <!-- Alasan (dicatat di riwayat moderasi) -->
+            <div id="kelolaAlasanWrapper">
+                <h3 class="forum-modal-section-title">Alasan (dicatat di riwayat moderasi)</h3>
+                <textarea class="forum-modal-textarea" name="alasan" id="kelolaAlasanInput" placeholder="Tulis alasan tindakan" required>Pelanggaran aturan forum berulang</textarea>
+            </div>
+
+            <!-- Callout Kuning -->
+            <div class="forum-modal-warning-box" id="kelolaWarningBox" style="display: none;">
+                Blokir permanen sebaiknya ditinjau dulu sebelum diterapkan.
+            </div>
+
+            <!-- Footer -->
+            <div class="forum-modal-footer">
+                <div class="forum-modal-footer__actions">
+                    <button type="button" class="btn-modal-cancel btn-modal-cancel--maroon" onclick="closeKelolaPembatasanModal()">Batal</button>
+                    <button type="submit" class="btn-modal-apply">Terapkan</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- ==========================================================================
-     MODAL 1: HAPUS KOMENTAR INI? (SESUAI GAMBAR 2)
+     MODAL 1: HAPUS KOMENTAR INI?
      ========================================================================== -->
 <div class="forum-modal-backdrop" id="modalHapusKomentar" style="display: none;" onclick="if(event.target === this) closeHapusKomentarModal()">
     <div class="forum-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalKomentarTitle">
@@ -450,55 +589,54 @@
         <!-- Box Preview Komentar dengan Border Merah -->
         <div class="forum-modal-preview-box">
             <div class="forum-modal-preview-box__header">
-                <strong id="modalKomentarAuthor">Anonim 123</strong>
-                <span id="modalKomentarTime">· 11.20</span>
+                <strong id="modalKomentarAuthor">-</strong>
+                <span id="modalKomentarTime">· -</span>
             </div>
-            <p class="forum-modal-preview-box__body" id="modalKomentarBody">
-                Liat aja nanti, aku cari tahu kamu siapa.
-            </p>
+            <p class="forum-modal-preview-box__body" id="modalKomentarBody">-</p>
         </div>
 
-        <!-- Alasan Penghapusan -->
-        <h3 class="forum-modal-section-title">Alasan penghapusan</h3>
-        <div class="forum-modal-pills">
-            <button type="button" class="forum-modal-pill is-selected" onclick="selectModalPill(this, 'modalKomentarMsg', 'Ancaman')">Ancaman</button>
-            <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'modalKomentarMsg', 'Perundungan')">Perundungan</button>
-            <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'modalKomentarMsg', 'Spam')">Spam</button>
-            <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'modalKomentarMsg', 'Lainnya')">Lainnya</button>
-        </div>
+        <form id="formHapusKomentar" method="POST" action="">
+            @csrf
+            <input type="hidden" name="alasan" id="inputAlasanHapusKomentar" value="Ancaman">
 
-        <!-- Tindakan Tambahan -->
-        <h3 class="forum-modal-section-title">Tindakan tambahan</h3>
-        <div class="forum-modal-pills">
-            <label class="forum-checkbox-pill">
-                <input type="checkbox" id="checkPeringatkanKomentar" checked>
-                <span>Peringatkan akun</span>
-            </label>
-            <label class="forum-checkbox-pill">
-                <input type="checkbox" id="checkMuteKomentar">
-                <span>Mute 24 jam</span>
-            </label>
-        </div>
-
-        <!-- Pesan ke Pengguna -->
-        <h3 class="forum-modal-section-title">Pesan ke pengguna</h3>
-        <textarea class="forum-modal-textarea" id="modalKomentarMsg">Komentarmu dihapus karena melanggar aturan komunitas (Ancaman). Mohon jaga komunitas tetap aman.</textarea>
-
-        <!-- Footer -->
-        <div class="forum-modal-footer">
-            <p class="forum-modal-footer__note">
-                Komentar yang dihapus tersimpan 30 hari di arsip moderasi dan bisa dipulihkan.
-            </p>
-            <div class="forum-modal-footer__actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeHapusKomentarModal()">Batal</button>
-                <button type="button" class="btn-modal-danger" onclick="confirmHapusKomentar()">Hapus Komentar</button>
+            <!-- Alasan Penghapusan -->
+            <h3 class="forum-modal-section-title">Alasan penghapusan</h3>
+            <div class="forum-modal-pills">
+                <button type="button" class="forum-modal-pill is-selected" onclick="selectModalPill(this, 'inputAlasanHapusKomentar', 'Ancaman')">Ancaman</button>
+                <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'inputAlasanHapusKomentar', 'Perundungan')">Perundungan</button>
+                <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'inputAlasanHapusKomentar', 'Spam')">Spam</button>
+                <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'inputAlasanHapusKomentar', 'Lainnya')">Lainnya</button>
             </div>
-        </div>
+
+            <!-- Tindakan Tambahan -->
+            <h3 class="forum-modal-section-title">Tindakan tambahan</h3>
+            <div class="forum-modal-pills">
+                <label class="forum-checkbox-pill">
+                    <input type="checkbox" name="peringatkan" value="1" id="checkPeringatkanKomentar">
+                    <span>Peringatkan akun</span>
+                </label>
+                <label class="forum-checkbox-pill">
+                    <input type="checkbox" name="mute_24_jam" value="1" id="checkMuteKomentar">
+                    <span>Mute 24 jam</span>
+                </label>
+            </div>
+
+            <!-- Footer -->
+            <div class="forum-modal-footer">
+                <p class="forum-modal-footer__note">
+                    Komentar yang dihapus tersimpan di arsip moderasi dan bisa dipulihkan.
+                </p>
+                <div class="forum-modal-footer__actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeHapusKomentarModal()">Batal</button>
+                    <button type="submit" class="btn-modal-danger">Hapus Komentar</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- ==========================================================================
-     MODAL 2: DETAIL POSTINGAN (SESUAI GAMBAR 4)
+     MODAL 2: DETAIL POSTINGAN
      ========================================================================== -->
 <div class="forum-modal-backdrop" id="modalDetailPost" style="display: none;" onclick="if(event.target === this) closeDetailPostModal()">
     <div class="forum-modal-card forum-modal-card--wide" role="dialog" aria-modal="true" aria-labelledby="modalDetailTitle">
@@ -510,57 +648,20 @@
         <div class="forum-detail-post-card">
             <div class="forum-detail-post-card__top">
                 <div class="forum-detail-post-card__author">
-                    <strong id="modalPostAuthor">Kopi Hangat</strong>
-                    <span id="modalPostMeta">25 menit lalu · Magang & Dunia Kerja</span>
+                    <strong id="modalPostAuthor">-</strong>
+                    <span id="modalPostMeta">-</span>
                 </div>
                 <span class="forum-badge-pill forum-badge-pill--aktif" id="modalPostStatus">Aktif</span>
             </div>
-            <p class="forum-detail-post-card__body" id="modalPostContent">
-                Hari ketiga magang dan aku masih takut bertanya ke mentor. Rasanya semua orang sudah paham, cuma aku yang bingung. Ada yang pernah merasa begini juga?
-            </p>
+            <p class="forum-detail-post-card__body" id="modalPostContent">-</p>
             <div class="forum-detail-post-card__tags">
-                <span class="forum-tag-pill">Curhat</span>
-                <span class="forum-tag-pill">Magang</span>
-                <span class="forum-detail-post-card__stats" id="modalPostStats">45 dukungan · 16 komentar</span>
+                <span class="forum-detail-post-card__stats" id="modalPostStats">0 dukungan · 0 komentar</span>
             </div>
         </div>
 
         <!-- Komentar Terbaru -->
         <h3 class="forum-modal-section-title">Komentar terbaru</h3>
-        <div class="forum-comments-group">
-            <!-- Komentar 1 Normal -->
-            <div class="forum-comment-card">
-                <div class="forum-comment-card__top">
-                    <span class="forum-comment-card__author">
-                        <strong>Teh Hijau</strong> <span>· 20 menit lalu</span>
-                    </span>
-                </div>
-                <p class="forum-comment-card__body">
-                    Aku juga ngerasa gitu di minggu pertama. Pelan-pelan ya.
-                </p>
-            </div>
-
-            <!-- Komentar 2 Dilaporkan (Border Merah) -->
-            <div class="forum-comment-card forum-comment-card--flagged">
-                <div class="forum-comment-card__top">
-                    <span class="forum-comment-card__author">
-                        <strong>Singa Malam</strong> <span>· 11.20</span>
-                    </span>
-                    <span class="forum-badge-pill forum-badge-pill--dilaporkan">Dilaporkan 4</span>
-                </div>
-                <p class="forum-comment-card__body">
-                    Liat aja nanti, aku cari tahu kamu siapa.
-                </p>
-                <div class="forum-comment-card__actions">
-                    <button type="button" class="forum-comment-action-btn" onclick="openHapusKomentarModalFromDetail()">Hapus komentar</button>
-                    <button type="button" class="forum-comment-action-btn" onclick="alert('Peringatan dikirimkan ke akun!')">Peringatkan akun</button>
-                </div>
-            </div>
-        </div>
-
-        <p class="forum-modal-footer__note" style="max-width: 100%; margin-bottom: 20px;">
-            Riwayat moderasi: belum ada tindakan pada postingan ini.
-        </p>
+        <div class="forum-comments-group" id="modalPostCommentsGroup"></div>
 
         <!-- Footer Tombol -->
         <div class="forum-modal-footer">
@@ -573,7 +674,7 @@
 </div>
 
 <!-- ==========================================================================
-     MODAL 3: HAPUS POSTINGAN INI? (SESUAI GAMBAR 5)
+     MODAL 3: HAPUS POSTINGAN INI?
      ========================================================================== -->
 <div class="forum-modal-backdrop" id="modalHapusPost" style="display: none;" onclick="if(event.target === this) closeHapusPostModal()">
     <div class="forum-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalHapusPostTitle">
@@ -584,65 +685,78 @@
         <!-- Box Preview Postingan dengan Border Merah -->
         <div class="forum-modal-preview-box">
             <div class="forum-modal-preview-box__header">
-                <strong id="modalHapusPostAuthor">Kopi Hangat</strong>
-                <span id="modalHapusPostMeta">· 25 menit lalu</span>
+                <strong id="modalHapusPostAuthor">-</strong>
+                <span id="modalHapusPostMeta">· -</span>
             </div>
-            <p class="forum-modal-preview-box__body" id="modalHapusPostBody">
-                Hari ketiga magang dan aku masih takut bertanya ke mentor...
-            </p>
+            <p class="forum-modal-preview-box__body" id="modalHapusPostBody">-</p>
         </div>
 
         <!-- Warning Callout Kuning -->
         <div class="forum-modal-warning-box">
-            <span id="modalHapusPostWarning">16 komentar pada postingan ini ikut disembunyikan dari komunitas.</span>
+            <span id="modalHapusPostWarning">0 komentar pada postingan ini ikut terdampak saat postingan dihapus.</span>
         </div>
 
-        <!-- Alasan Penghapusan -->
-        <h3 class="forum-modal-section-title">Alasan penghapusan</h3>
-        <div class="forum-modal-pills">
-            <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'modalPostMsg', 'Perundungan')">Perundungan</button>
-            <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'modalPostMsg', 'Ancaman')">Ancaman</button>
-            <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'modalPostMsg', 'Spam')">Spam</button>
-            <button type="button" class="forum-modal-pill is-selected" onclick="selectModalPill(this, 'modalPostMsg', 'Melanggar aturan lain')">Melanggar aturan lain</button>
-        </div>
+        <form id="formHapusPost" method="POST" action="">
+            @csrf
+            <input type="hidden" name="alasan" id="inputAlasanHapusPost" value="Melanggar aturan lain">
 
-        <!-- Tindakan Tambahan -->
-        <h3 class="forum-modal-section-title">Tindakan tambahan</h3>
-        <div class="forum-modal-pills">
-            <label class="forum-checkbox-pill">
-                <input type="checkbox" id="checkPeringatkanPost">
-                <span>Peringatkan akun</span>
-            </label>
-            <label class="forum-checkbox-pill">
-                <input type="checkbox" id="checkMutePost">
-                <span>Mute 24 jam</span>
-            </label>
-        </div>
-
-        <!-- Pesan ke Pengguna -->
-        <h3 class="forum-modal-section-title">Pesan ke pengguna</h3>
-        <textarea class="forum-modal-textarea" id="modalPostMsg">Postinganmu dihapus karena melanggar aturan komunitas. Mohon jaga kom tetap aman.</textarea>
-
-        <!-- Footer -->
-        <div class="forum-modal-footer">
-            <p class="forum-modal-footer__note">
-                Disimpan 30 hari di arsip moderasi dan bisa dipulihkan.
-            </p>
-            <div class="forum-modal-footer__actions">
-                <button type="button" class="btn-modal-cancel" onclick="closeHapusPostModal()">Batal</button>
-                <button type="button" class="btn-modal-danger" onclick="confirmHapusPost()">Hapus Postingan</button>
+            <!-- Alasan Penghapusan -->
+            <h3 class="forum-modal-section-title">Alasan penghapusan</h3>
+            <div class="forum-modal-pills">
+                <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'inputAlasanHapusPost', 'Perundungan')">Perundungan</button>
+                <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'inputAlasanHapusPost', 'Ancaman')">Ancaman</button>
+                <button type="button" class="forum-modal-pill" onclick="selectModalPill(this, 'inputAlasanHapusPost', 'Spam')">Spam</button>
+                <button type="button" class="forum-modal-pill is-selected" onclick="selectModalPill(this, 'inputAlasanHapusPost', 'Melanggar aturan lain')">Melanggar aturan lain</button>
             </div>
-        </div>
+
+            <!-- Tindakan Tambahan -->
+            <h3 class="forum-modal-section-title">Tindakan tambahan</h3>
+            <div class="forum-modal-pills">
+                <label class="forum-checkbox-pill">
+                    <input type="checkbox" name="peringatkan" value="1" id="checkPeringatkanPost">
+                    <span>Peringatkan akun</span>
+                </label>
+                <label class="forum-checkbox-pill">
+                    <input type="checkbox" name="mute_24_jam" value="1" id="checkMutePost">
+                    <span>Mute 24 jam</span>
+                </label>
+            </div>
+
+            <!-- Footer -->
+            <div class="forum-modal-footer">
+                <p class="forum-modal-footer__note">
+                    Disimpan di arsip moderasi dan bisa dipulihkan.
+                </p>
+                <div class="forum-modal-footer__actions">
+                    <button type="button" class="btn-modal-cancel" onclick="closeHapusPostModal()">Batal</button>
+                    <button type="submit" class="btn-modal-danger">Hapus Postingan</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    // Data Lists
     const antreanData = @json($antreanLaporan ?? []);
     const kontenData = @json($semuaKonten ?? []);
     const dibatasiData = @json($penggunaDibatasi ?? []);
+
+    const routeTemplates = {
+        hapus: @json(route('admin.forum.posts.hapus', ['id' => '__ID__'])),
+        pulihkan: @json(route('admin.forum.posts.pulihkan', ['id' => '__ID__'])),
+        tindak: @json(route('admin.forum.laporan.tindak', ['id' => '__ID__'])),
+        tolak: @json(route('admin.forum.laporan.tolak', ['id' => '__ID__'])),
+        sanksiStore: @json(route('admin.forum.sanksi.store')),
+        sanksiCabut: @json(route('admin.forum.sanksi.cabut', ['id' => '__ID__'])),
+    };
+
+    function buildUrl(template, id) {
+        return template.replace('__ID__', id);
+    }
+
+    let currentSelectedItem = antreanData.length > 0 ? antreanData[0] : null;
 
     function selectQueueById(id, element) {
         const item = antreanData.find(x => x.id == id);
@@ -659,26 +773,22 @@
         if (item) openHapusPostModal(item);
     }
 
+    function openHapusKomentarById(id) {
+        const item = kontenData.find(x => x.id == id);
+        if (item) openHapusKomentarModalWithData(item.id_post, item.penulis, item.waktu, item.isi_full || item.isi);
+    }
+
     function openKelolaById(id, action) {
         const item = dibatasiData.find(x => x.id == id);
         if (item) openKelolaPembatasanModal(item, action);
     }
-
-    // State Moderasi
-    let currentSelectedItem = {
-        id: 1,
-        penulis: 'Singa Malam',
-        waktu: '11.20',
-        isi: 'Liat aja nanti, aku cari tahu kamu siapa.'
-    };
 
     // Filter Antrean Laporan (Semua, Perundungan, Ancaman, Berisiko, Spam)
     function filterQueue(btn, category) {
         document.querySelectorAll('.forum-chip-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
 
-        const cards = document.querySelectorAll('.forum-queue-card');
-        cards.forEach(card => {
+        document.querySelectorAll('.forum-queue-card').forEach(card => {
             if (category === 'semua' || card.getAttribute('data-kategori') === category) {
                 card.style.display = 'block';
             } else {
@@ -687,7 +797,7 @@
         });
     }
 
-    // Pemilihan item antrean untuk update panel kanan
+    // Pemilihan item antrean untuk update panel kanan dan action form
     function selectQueueItem(data, element) {
         document.querySelectorAll('.forum-queue-card').forEach(c => c.classList.remove('is-selected'));
         if (element) {
@@ -696,12 +806,10 @@
 
         currentSelectedItem = data;
 
-        // Update Title & Subtitle
         document.getElementById('detailTitle').textContent = data.jenis === 'Komentar' ? 'Komentar Dilaporkan' : 'Postingan Dilaporkan';
         document.getElementById('detailSubtitle').textContent = data.sub_laporan || 'Menunggu tindakan';
         document.getElementById('detailHistoryNote').textContent = data.riwayat || '';
 
-        // Update Konteks
         if (data.post_konteks) {
             document.getElementById('postAuthor').textContent = data.post_konteks.penulis;
             document.getElementById('postMeta').textContent = data.post_konteks.waktu + ' - ' + data.post_konteks.komunitas;
@@ -709,28 +817,62 @@
             document.getElementById('detailPostBox').style.display = 'block';
         }
 
+        const btnHapus = document.getElementById('btnHapusAction');
+        const btnPulihkan = document.getElementById('btnPulihkanAction');
         if (data.komentar_konteks) {
             document.getElementById('commentAuthor').textContent = data.komentar_konteks.penulis;
             document.getElementById('commentMeta').textContent = data.komentar_konteks.waktu + ' Membalas ' + data.komentar_konteks.membalas;
             document.getElementById('commentContent').textContent = data.komentar_konteks.isi;
             document.getElementById('detailCommentBox').style.display = 'block';
-            document.getElementById('btnHapusAction').textContent = 'HAPUS KOMENTAR';
+            btnHapus.textContent = 'HAPUS KOMENTAR';
         } else {
             document.getElementById('detailCommentBox').style.display = 'none';
-            document.getElementById('btnHapusAction').textContent = 'HAPUS POSTINGAN';
+            btnHapus.textContent = 'HAPUS POSTINGAN';
+        }
+
+        document.getElementById('formTolakLaporan').action = buildUrl(routeTemplates.tolak, data.id_post);
+        document.getElementById('formTindakLaporan').action = buildUrl(routeTemplates.tindak, data.id_post);
+        document.getElementById('formPulihkanAntrean').action = buildUrl(routeTemplates.pulihkan, data.id_post);
+
+        const isMenunggu = data.status_laporan === 'menunggu';
+        document.getElementById('btnTolakLaporan').style.display = isMenunggu ? '' : 'none';
+        document.getElementById('btnTindakLaporan').style.display = isMenunggu ? '' : 'none';
+
+        const isDihapus = data.status_konten === 'dihapus';
+        btnHapus.style.display = isDihapus ? 'none' : '';
+        btnPulihkan.style.display = isDihapus ? '' : 'none';
+
+        document.getElementById('muteInputUser').value = data.id_user;
+        document.getElementById('muteInputLaporan').value = data.id_laporan || '';
+        document.getElementById('muteInputAlasan').value = data.kategori || 'Pelanggaran forum';
+
+        document.getElementById('peringatanInputUser').value = data.id_user;
+        document.getElementById('peringatanInputLaporan').value = data.id_laporan || '';
+        document.getElementById('peringatanInputAlasan').value = data.kategori || 'Pelanggaran forum';
+    }
+
+    function openHapusAntreanModal() {
+        if (!currentSelectedItem) return;
+        if (currentSelectedItem.jenis === 'Komentar') {
+            openHapusKomentarModalWithData(
+                currentSelectedItem.id_post,
+                currentSelectedItem.penulis,
+                currentSelectedItem.waktu,
+                currentSelectedItem.isi
+            );
+        } else {
+            openHapusPostModal({
+                id_post: currentSelectedItem.id_post,
+                penulis: currentSelectedItem.penulis,
+                waktu: currentSelectedItem.waktu,
+                isi: currentSelectedItem.isi,
+                komentar_count: 0
+            });
         }
     }
 
-    // Modal Hapus Komentar
-    function openHapusKomentarModal() {
-        const author = currentSelectedItem.penulis || 'Anonim 123';
-        const time = currentSelectedItem.waktu || '11.20';
-        const body = currentSelectedItem.isi || 'Liat aja nanti, aku cari tahu kamu siapa.';
-
-        openHapusKomentarModalWithData(author, time, body);
-    }
-
-    function openHapusKomentarModalWithData(author, time, body) {
+    function openHapusKomentarModalWithData(idPost, author, time, body) {
+        document.getElementById('formHapusKomentar').action = buildUrl(routeTemplates.hapus, idPost);
         document.getElementById('modalKomentarAuthor').textContent = author;
         document.getElementById('modalKomentarTime').textContent = '· ' + time;
         document.getElementById('modalKomentarBody').textContent = body;
@@ -739,11 +881,6 @@
 
     function closeHapusKomentarModal() {
         document.getElementById('modalHapusKomentar').style.display = 'none';
-    }
-
-    function confirmHapusKomentar() {
-        alert('Komentar berhasil dihapus dan dipindahkan ke arsip moderasi.');
-        closeHapusKomentarModal();
     }
 
     // Modal Detail Postingan
@@ -755,7 +892,65 @@
         document.getElementById('modalPostMeta').textContent = post.waktu + ' · ' + post.komunitas;
         document.getElementById('modalPostStatus').textContent = post.status;
         document.getElementById('modalPostContent').textContent = post.isi_full || post.isi;
-        document.getElementById('modalPostStats').textContent = (post.dukungan || 45) + ' dukungan · ' + (post.komentar_count || 16) + ' komentar';
+        document.getElementById('modalPostStats').textContent = (post.dukungan ?? 0) + ' dukungan · ' + (post.komentar_count ?? 0) + ' komentar';
+
+        const group = document.getElementById('modalPostCommentsGroup');
+        group.innerHTML = '';
+
+        const comments = post.komentar_list || [];
+        if (comments.length === 0) {
+            const emptyNote = document.createElement('p');
+            emptyNote.style.fontSize = '13px';
+            emptyNote.style.color = '#6B7280';
+            emptyNote.textContent = 'Belum ada komentar pada postingan ini.';
+            group.appendChild(emptyNote);
+        } else {
+            comments.forEach(comment => {
+                const card = document.createElement('div');
+                card.className = 'forum-comment-card' + (comment.is_flagged ? ' forum-comment-card--flagged' : '');
+
+                const top = document.createElement('div');
+                top.className = 'forum-comment-card__top';
+
+                const authorSpan = document.createElement('span');
+                authorSpan.className = 'forum-comment-card__author';
+                const strong = document.createElement('strong');
+                strong.textContent = comment.penulis;
+                const timeSpan = document.createElement('span');
+                timeSpan.textContent = ' · ' + comment.waktu;
+                authorSpan.appendChild(strong);
+                authorSpan.appendChild(timeSpan);
+                top.appendChild(authorSpan);
+
+                if (comment.is_flagged) {
+                    const badge = document.createElement('span');
+                    badge.className = 'forum-badge-pill forum-badge-pill--dilaporkan';
+                    badge.textContent = 'Dilaporkan ' + comment.laporan;
+                    top.appendChild(badge);
+                }
+
+                const body = document.createElement('p');
+                body.className = 'forum-comment-card__body';
+                body.textContent = comment.isi;
+
+                const actions = document.createElement('div');
+                actions.className = 'forum-comment-card__actions';
+                const btnDel = document.createElement('button');
+                btnDel.type = 'button';
+                btnDel.className = 'forum-comment-action-btn';
+                btnDel.textContent = 'Hapus komentar';
+                btnDel.onclick = () => {
+                    closeDetailPostModal();
+                    openHapusKomentarModalWithData(comment.id_post, comment.penulis, comment.waktu, comment.isi);
+                };
+                actions.appendChild(btnDel);
+
+                card.appendChild(top);
+                card.appendChild(body);
+                card.appendChild(actions);
+                group.appendChild(card);
+            });
+        }
 
         document.getElementById('modalDetailPost').style.display = 'flex';
     }
@@ -764,31 +959,20 @@
         document.getElementById('modalDetailPost').style.display = 'none';
     }
 
-    function openHapusKomentarModalFromDetail() {
-        closeDetailPostModal();
-        openHapusKomentarModalWithData('Singa Malam', '11.20', 'Liat aja nanti, aku cari tahu kamu siapa.');
-    }
-
     function switchToHapusPostModal() {
         closeDetailPostModal();
         if (activePostDetail) {
             openHapusPostModal(activePostDetail);
-        } else {
-            openHapusPostModal({
-                alias: 'Kopi Hangat',
-                waktu: '25 menit lalu',
-                isi: 'Hari ketiga magang dan aku masih takut bertanya ke mentor...',
-                komentar_count: 16
-            });
         }
     }
 
     // Modal Hapus Postingan
     function openHapusPostModal(post) {
-        document.getElementById('modalHapusPostAuthor').textContent = post.alias || post.penulis || 'Kopi Hangat';
-        document.getElementById('modalHapusPostMeta').textContent = '· ' + (post.waktu || '25 menit lalu');
-        document.getElementById('modalHapusPostBody').textContent = post.isi || post.isi_full;
-        document.getElementById('modalHapusPostWarning').textContent = (post.komentar_count || 16) + ' komentar pada postingan ini ikut disembunyikan dari komunitas.';
+        document.getElementById('formHapusPost').action = buildUrl(routeTemplates.hapus, post.id_post || post.id);
+        document.getElementById('modalHapusPostAuthor').textContent = post.alias || post.penulis || 'Anonim';
+        document.getElementById('modalHapusPostMeta').textContent = '· ' + (post.waktu || '-');
+        document.getElementById('modalHapusPostBody').textContent = post.isi_full || post.isi;
+        document.getElementById('modalHapusPostWarning').textContent = (post.komentar_count ?? 0) + ' komentar pada postingan ini ikut terdampak saat postingan dihapus.';
 
         document.getElementById('modalHapusPost').style.display = 'flex';
     }
@@ -797,65 +981,16 @@
         document.getElementById('modalHapusPost').style.display = 'none';
     }
 
-    function confirmHapusPost() {
-        alert('Postingan berhasil dihapus beserta komentar di dalamnya.');
-        closeHapusPostModal();
-    }
-
-    // Pills interaktif pada modal
-    function selectModalPill(btn, textareaId, category) {
+    // Pills interaktif alasan penghapusan
+    function selectModalPill(btn, hiddenInputId, category) {
         const parent = btn.parentElement;
         parent.querySelectorAll('.forum-modal-pill').forEach(p => p.classList.remove('is-selected'));
         btn.classList.add('is-selected');
 
-        const textarea = document.getElementById(textareaId);
-        if (textarea) {
-            if (textareaId === 'modalKomentarMsg') {
-                textarea.value = `Komentarmu dihapus karena melanggar aturan komunitas (${category}). Mohon jaga komunitas tetap aman.`;
-            } else {
-                textarea.value = `Postinganmu dihapus karena melanggar aturan komunitas (${category}). Mohon jaga komunitas tetap aman.`;
-            }
+        const hiddenInput = document.getElementById(hiddenInputId);
+        if (hiddenInput) {
+            hiddenInput.value = category;
         }
-    }
-
-    // Aksi Moderasi
-    function abaikanLaporan() {
-        alert('Laporan diabaikan dan ditandai selesai.');
-    }
-
-    function muteUser(hours) {
-        alert(`Akun pengguna dibisukan selama ${hours} jam.`);
-    }
-
-    function peringatkanAkun() {
-        alert('Peringatan resmi moderator telah dikirimkan ke akun pengguna.');
-    }
-
-    // Filter Table Semua Konten
-    function filterKontenTable() {
-        const search = document.getElementById('searchKontenInput').value.toLowerCase();
-        const jenis = document.getElementById('filterJenis').value;
-        const komunitas = document.getElementById('filterKomunitas').value;
-        const status = document.getElementById('filterStatus').value;
-
-        const rows = document.querySelectorAll('#tableKonten tbody tr');
-        rows.forEach(row => {
-            const rowText = row.textContent.toLowerCase();
-            const rowJenis = row.getAttribute('data-jenis');
-            const rowKomunitas = row.getAttribute('data-komunitas');
-            const rowStatus = row.getAttribute('data-status');
-
-            const matchSearch = rowText.includes(search);
-            const matchJenis = !jenis || rowJenis === jenis;
-            const matchKomunitas = !komunitas || rowKomunitas === komunitas;
-            const matchStatus = !status || rowStatus.includes(status);
-
-            if (matchSearch && matchJenis && matchKomunitas && matchStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
     }
 
     // Modal Kelola Pembatasan (Tab 3)
@@ -864,28 +999,26 @@
     function openKelolaPembatasanModal(user, action) {
         currentKelolaUser = user;
         document.getElementById('kelolaUserName').textContent = user.nama;
-        
+        document.getElementById('kelolaInputUserId').value = user.id_user;
+
         const statusBadge = document.getElementById('kelolaUserStatus');
         statusBadge.textContent = user.status;
         statusBadge.className = 'forum-badge-pill';
         if (user.status_type === 'mute') statusBadge.classList.add('forum-badge-pill--mute');
-        else if (user.status_type === 'warning-2') statusBadge.classList.add('forum-badge-pill--warning-2');
-        else if (user.status_type === 'warning-1') statusBadge.classList.add('forum-badge-pill--warning-1');
         else if (user.status_type === 'blocked') statusBadge.classList.add('forum-badge-pill--blocked');
 
         document.getElementById('kelolaUserSub').textContent = user.sub_info || `Alasan: ${user.alasan}`;
+        document.getElementById('kelolaAlasanInput').value = user.alasan || 'Pelanggaran aturan forum';
 
-        // Set active pill based on action
         const pills = document.querySelectorAll('#kelolaTindakanPills .forum-modal-pill');
+        let matchedPill = pills[1];
         pills.forEach(p => {
             p.classList.remove('is-selected');
             if (action && p.textContent.toLowerCase().includes(action.toLowerCase())) {
-                p.classList.add('is-selected');
+                matchedPill = p;
             }
         });
-        if (!document.querySelector('#kelolaTindakanPills .forum-modal-pill.is-selected')) {
-            pills[1].classList.add('is-selected'); // Default 'Perpanjang mute'
-        }
+        selectKelolaTindakan(matchedPill, matchedPill.textContent.trim());
 
         document.getElementById('modalKelolaPembatasan').style.display = 'flex';
     }
@@ -898,30 +1031,40 @@
         document.querySelectorAll('#kelolaTindakanPills .forum-modal-pill').forEach(p => p.classList.remove('is-selected'));
         btn.classList.add('is-selected');
 
+        const form = document.getElementById('formKelolaPembatasan');
+        const inputJenis = document.getElementById('kelolaInputJenis');
+        const durasiWrapper = document.getElementById('kelolaDurasiWrapper');
+        const durasiSelect = document.getElementById('kelolaDurasiSelect');
+        const alasanWrapper = document.getElementById('kelolaAlasanWrapper');
+        const alasanInput = document.getElementById('kelolaAlasanInput');
         const warningBox = document.getElementById('kelolaWarningBox');
-        if (actionName === 'Blokir permanen') {
-            warningBox.style.display = 'block';
-            document.getElementById('kelolaDurasiSelect').value = 'Permanen';
-        } else if (actionName === 'Blokir 7 hari') {
+
+        if (actionName === 'Cabut pembatasan' && currentKelolaUser) {
+            form.action = buildUrl(routeTemplates.sanksiCabut, currentKelolaUser.id_sanksi);
+            durasiWrapper.style.display = 'none';
+            alasanWrapper.style.display = 'none';
+            alasanInput.required = false;
             warningBox.style.display = 'none';
-            document.getElementById('kelolaDurasiSelect').value = '7 hari';
-        } else if (actionName === 'Perpanjang mute') {
-            warningBox.style.display = 'none';
-            document.getElementById('kelolaDurasiSelect').value = '24 jam';
-        } else {
-            warningBox.style.display = 'none';
+            return;
         }
-    }
 
-    function confirmKelolaPembatasan() {
-        const userName = currentKelolaUser ? currentKelolaUser.nama : 'pengguna';
-        alert(`Perubahan pembatasan untuk ${userName} berhasil diterapkan!`);
-        closeKelolaPembatasanModal();
-    }
+        form.action = routeTemplates.sanksiStore;
+        durasiWrapper.style.display = '';
+        alasanWrapper.style.display = '';
+        alasanInput.required = true;
 
-    function cabutPembatasan(userName) {
-        if (confirm(`Cabut semua pembatasan aktif untuk akun ${userName}?`)) {
-            alert(`Pembatasan untuk ${userName} berhasil dicabut.`);
+        if (actionName === 'Blokir permanen') {
+            inputJenis.value = 'blokir';
+            durasiSelect.value = '';
+            warningBox.style.display = 'block';
+        } else if (actionName === 'Blokir 7 hari') {
+            inputJenis.value = 'blokir';
+            durasiSelect.value = '168';
+            warningBox.style.display = 'none';
+        } else {
+            inputJenis.value = 'mute';
+            durasiSelect.value = '24';
+            warningBox.style.display = 'none';
         }
     }
 
@@ -930,20 +1073,14 @@
         const search = document.getElementById('searchDibatasiInput').value.toLowerCase();
         const status = document.getElementById('filterDibatasiStatus').value.toLowerCase();
 
-        const rows = document.querySelectorAll('#tableDibatasi tbody tr');
-        rows.forEach(row => {
+        document.querySelectorAll('#tableDibatasi tbody tr.forum-dibatasi-row').forEach(row => {
             const rowNama = (row.getAttribute('data-nama') || '').toLowerCase();
             const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
-            const rowText = row.textContent.toLowerCase();
 
-            const matchSearch = rowText.includes(search) || rowNama.includes(search);
+            const matchSearch = rowNama.includes(search) || row.textContent.toLowerCase().includes(search);
             const matchStatus = !status || rowStatus.includes(status);
 
-            if (matchSearch && matchStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            row.style.display = (matchSearch && matchStatus) ? '' : 'none';
         });
     }
 </script>
