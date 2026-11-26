@@ -38,4 +38,9 @@ class ForumDiskusiAnonim extends Model
     {
         return $this->hasMany(ForumLike::class, 'id_post', 'id_post');
     }
+
+    public function laporan(): HasMany
+    {
+        return $this->hasMany(LaporanForum::class, 'id_post', 'id_post');
+    }
 }

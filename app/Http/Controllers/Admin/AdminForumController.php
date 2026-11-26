@@ -2,280 +2,200 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\ForumException;
 use App\Http\Controllers\Controller;
+use App\Models\KomunitasForum;
+use App\Services\ForumService;
+use App\Services\SanksiService;
 use Illuminate\Http\Request;
 
 class AdminForumController extends Controller
 {
+    public function __construct(
+        protected ForumService $forumService,
+        protected SanksiService $sanksiService
+    ) {}
+
     /**
-     * Tampilkan halaman moderasi Forum Anonim sesuai desain baru.
+     * Tampilkan halaman moderasi Forum Anonim berbasis data database.
      */
     public function index(Request $request)
     {
         $tab = $request->query('tab', 'antrean');
-        if (! in_array($tab, ['antrean', 'semua-konten', 'pengguna-dibatasi'])) {
+        if (! in_array($tab, ['antrean', 'semua-konten', 'pengguna-dibatasi'], true)) {
             $tab = 'antrean';
         }
 
-        // Statistik Moderasi
-        $stats = [
-            'laporan_baru'     => 7,
-            'konten_beresiko'  => 1,
-            'dihapus_hari_ini' => 4,
-            'pengguna_dimute'  => 2,
+        $filters = [
+            'search'       => $request->query('search'),
+            'jenis'        => $request->query('jenis'),
+            'id_komunitas' => $request->query('id_komunitas'),
+            'status'       => $request->query('status'),
         ];
 
-        // Antrean Laporan
-        $antreanLaporan = [
-            [
-                'id'            => 1,
-                'jenis'         => 'Komentar',
-                'kategori'      => 'Ancaman',
-                'kategori_slug' => 'ancaman',
-                'badge_color'   => '#7A0C2E',
-                'waktu'         => '11.20',
-                'penulis'       => 'Singa Malam',
-                'komunitas'     => 'Magang',
-                'isi'           => 'Liat aja nanti, aku cari tahu kamu siapa.',
-                'jumlah_laporan'=> '4 laporan',
-                'is_active'     => true,
-                'post_konteks'  => [
-                    'penulis'   => 'Anonim 345',
-                    'waktu'     => '25 Menit yang lalu',
-                    'komunitas' => 'Magang Dan Dunia Kerja',
-                    'isi'       => 'Hari ketiga magang dan aku masih takut bertanya ke mentor. Rasanya semua orang sudah paham, cuma aku yang bingung. Ada yang pernah merasa begini juga?',
-                ],
-                'komentar_konteks' => [
-                    'penulis'   => 'Anonim 123',
-                    'waktu'     => '11.20',
-                    'membalas'  => 'Anonim 345',
-                    'isi'       => 'Liat aja nanti, aku cari tahu kamu siapa.',
-                ],
-                'riwayat'       => 'Riwayat akun Singa Malam: 1 peringatan, belum pernah di-mute. Identitas asli tidak ditampilkan kepada moderator.',
-                'sub_laporan'   => 'Menunggu tindakan · 4 laporan (3 ancaman, 1 perundungan)',
-            ],
-            [
-                'id'            => 2,
-                'jenis'         => 'Komentar',
-                'kategori'      => 'Perundungan',
-                'kategori_slug' => 'perundungan',
-                'badge_color'   => '#D97706',
-                'waktu'         => '10.30',
-                'penulis'       => 'Kopi Dingin',
-                'komunitas'     => 'Magang',
-                'isi'           => 'Gitu aja ngeluh, lemah banget.',
-                'jumlah_laporan'=> '3 laporan',
-                'is_active'     => false,
-                'post_konteks'  => [
-                    'penulis'   => 'Anonim 789',
-                    'waktu'     => '1 jam lalu',
-                    'komunitas' => 'Magang & Dunia Kerja',
-                    'isi'       => 'Gimana cara bilang ke atasan kalau beban kerjaku terlalu banyak tapi takut dinilai gak kompeten ya?',
-                ],
-                'komentar_konteks' => [
-                    'penulis'   => 'Kopi Dingin',
-                    'waktu'     => '10.30',
-                    'membalas'  => 'Anonim 789',
-                    'isi'       => 'Gitu aja ngeluh, lemah banget.',
-                ],
-                'riwayat'       => 'Riwayat akun Kopi Dingin: Pernah dihapus 1x sebelumnya. Identitas asli tidak ditampilkan kepada moderator.',
-                'sub_laporan'   => 'Menunggu tindakan · 3 laporan (3 perundungan)',
-            ],
-            [
-                'id'            => 3,
-                'jenis'         => 'Postingan',
-                'kategori'      => 'Spam',
-                'kategori_slug' => 'spam',
-                'badge_color'   => '#475569',
-                'waktu'         => '09.58',
-                'penulis'       => 'Bulan Pagi',
-                'komunitas'     => 'Self-Growth',
-                'isi'           => 'Jual followers murah, hubungi aku.',
-                'jumlah_laporan'=> '2 laporan',
-                'is_active'     => false,
-                'post_konteks'  => [
-                    'penulis'   => 'Bulan Pagi',
-                    'waktu'     => '09.58',
-                    'komunitas' => 'Self-Growth',
-                    'isi'       => 'Jual followers murah, hubungi aku di wa 0812345678.',
-                ],
-                'komentar_konteks' => null,
-                'riwayat'       => 'Riwayat akun Bulan Pagi: Akun baru dibuat 2 hari lalu. Identitas asli tidak ditampilkan kepada moderator.',
-                'sub_laporan'   => 'Menunggu tindakan · 2 laporan (2 spam)',
-            ],
-        ];
+        $stats                = $this->forumService->getStatistikModerasi();
+        $statsDibatasi        = $this->sanksiService->getStatistikDibatasi();
+        $antreanLaporan       = $this->forumService->getAntreanLaporan();
+        $semuaKontenPaginator = $this->forumService->getSemuaKonten($filters, 10);
+        $semuaKonten          = $semuaKontenPaginator->items();
+        $penggunaDibatasi     = $this->sanksiService->getPenggunaDibatasi();
+        $komunitasList        = KomunitasForum::orderBy('id_komunitas')->get(['id_komunitas', 'nama']);
 
-        // Semua Konten (Table)
-        $semuaKonten = [
-            [
-                'id'        => 1,
-                'jenis'     => 'Postingan',
-                'isi'       => 'Hari ketiga magang dan aku masih takut bertanya ke mentor...',
-                'isi_full'  => 'Hari ketiga magang dan aku masih takut bertanya ke mentor. Rasanya semua orang sudah paham, cuma aku yang bingung. Ada yang pernah merasa begini juga?',
-                'penulis'   => 'Anonim 657',
-                'alias'     => 'Kopi Hangat',
-                'komunitas' => 'Magang & Dunia Kerja',
-                'waktu'     => '25 menit lalu',
-                'status'    => 'Aktif',
-                'tags'      => ['Curhat', 'Magang'],
-                'dukungan'  => 45,
-                'komentar_count' => 16,
-                'komentar_list' => [
-                    [
-                        'penulis' => 'Teh Hijau',
-                        'waktu'   => '20 menit lalu',
-                        'isi'     => 'Aku juga ngerasa gitu di minggu pertama. Pelan-pelan ya.',
-                        'is_flagged' => false,
-                    ],
-                    [
-                        'penulis' => 'Singa Malam',
-                        'waktu'   => '11.20',
-                        'isi'     => 'Liat aja nanti, aku cari tahu kamu siapa.',
-                        'is_flagged' => true,
-                        'laporan' => 4,
-                    ],
-                ],
-                'aksi'      => ['lihat', 'hapus'],
-            ],
-            [
-                'id'        => 2,
-                'jenis'     => 'Postingan',
-                'isi'       => 'Gimana cara bilang ke atasan kalau beban kerjaku terlalu banyak...',
-                'isi_full'  => 'Gimana cara bilang ke atasan kalau beban kerjaku terlalu banyak tapi tetap terlihat profesional?',
-                'penulis'   => 'Anonim 789',
-                'alias'     => 'Anonim 789',
-                'komunitas' => 'Magang & Dunia Kerja',
-                'waktu'     => '1 jam lalu',
-                'status'    => 'Aktif',
-                'tags'      => ['Curhat', 'Magang'],
-                'dukungan'  => 32,
-                'komentar_count' => 8,
-                'komentar_list' => [],
-                'aksi'      => ['lihat', 'hapus'],
-            ],
-            [
-                'id'        => 3,
-                'jenis'     => 'Komentar',
-                'isi'       => 'Liat aja nanti, aku cari tahu kamu siapa.',
-                'isi_full'  => 'Liat aja nanti, aku cari tahu kamu siapa.',
-                'penulis'   => 'Anonim 456',
-                'alias'     => 'Anonim 456',
-                'komunitas' => 'Magang & Dunia Kerja',
-                'waktu'     => '11.20',
-                'status'    => 'Dilaporkan 4',
-                'tags'      => ['Ancaman'],
-                'dukungan'  => 0,
-                'komentar_count' => 0,
-                'komentar_list' => [],
-                'aksi'      => ['tinjau', 'hapus'],
-            ],
-            [
-                'id'        => 4,
-                'jenis'     => 'Postingan',
-                'isi'       => 'Rasanya udah gak ada gunanya lagi...',
-                'isi_full'  => 'Rasanya udah gak ada gunanya lagi berusaha keras kalau hasilnya selalu mengecewakan.',
-                'penulis'   => 'Hujan Sore',
-                'alias'     => 'Hujan Sore',
-                'komunitas' => 'Self-Growth',
-                'waktu'     => '10.45',
-                'status'    => 'Berisiko',
-                'tags'      => ['Berisiko', 'Curhat'],
-                'dukungan'  => 12,
-                'komentar_count' => 5,
-                'komentar_list' => [],
-                'aksi'      => ['tinjau'],
-            ],
-            [
-                'id'        => 5,
-                'jenis'     => 'Komentar',
-                'isi'       => 'Gitu aja ngeluh, lemah banget.',
-                'isi_full'  => 'Gitu aja ngeluh, lemah banget.',
-                'penulis'   => 'Kopi Dingin',
-                'alias'     => 'Kopi Dingin',
-                'komunitas' => 'Magang & Dunia Kerja',
-                'waktu'     => '10.30',
-                'status'    => 'Dihapus',
-                'is_deleted'=> true,
-                'tags'      => ['Perundungan'],
-                'dukungan'  => 1,
-                'komentar_count' => 0,
-                'komentar_list' => [],
-                'aksi'      => ['pulihkan'],
-            ],
-            [
-                'id'        => 6,
-                'jenis'     => 'Postingan',
-                'isi'       => 'Tips bikin kebiasaan nulis jurnal tiap malam sebelum tidur',
-                'isi_full'  => 'Tips bikin kebiasaan nulis jurnal tiap malam sebelum tidur agar pikiran lebih tenang.',
-                'penulis'   => 'Teh Hijau',
-                'alias'     => 'Teh Hijau',
-                'komunitas' => 'Self-Growth',
-                'waktu'     => 'Kemarin',
-                'status'    => 'Aktif',
-                'tags'      => ['Tips', 'Self-Growth'],
-                'dukungan'  => 56,
-                'komentar_count' => 14,
-                'komentar_list' => [],
-                'aksi'      => ['lihat', 'hapus'],
-            ],
-        ];
+        return view('admin.forum.index', compact(
+            'tab',
+            'filters',
+            'stats',
+            'statsDibatasi',
+            'antreanLaporan',
+            'semuaKonten',
+            'semuaKontenPaginator',
+            'penggunaDibatasi',
+            'komunitasList'
+        ));
+    }
 
-        // Statistik Pengguna Dibatasi (Tab 3)
-        $statsDibatasi = [
-            'peringatan'  => 7,
-            'mute_aktif'  => 2,
-            'diblokir'    => 1,
-        ];
+    /**
+     * Hapus konten forum (status menjadi 'dihapus').
+     */
+    public function hapusKonten(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'alasan'      => 'nullable|string|max:100',
+            'peringatkan' => 'nullable|boolean',
+            'mute_24_jam' => 'nullable|boolean',
+        ], [
+            'alasan.string' => 'Alasan penghapusan harus berupa teks.',
+            'alasan.max'    => 'Alasan penghapusan maksimal 100 karakter.',
+        ]);
 
-        // Pengguna Dibatasi (Tab 3)
-        $penggunaDibatasi = [
-            [
-                'id'        => 1,
-                'nama'      => 'Singa Malam',
-                'status'    => 'Mute 24 jam',
-                'status_type' => 'mute',
-                'alasan'    => 'Ancaman',
-                'mulai'     => 'Hari ini 11.40',
-                'berakhir'  => 'Besok 11.40',
-                'sub_info'  => 'Alasan: Ancaman · sisa 18 jam · 1 peringatan sebelumnya',
-                'aksi'      => ['Cabut', 'Perpanjang', 'Blokir'],
-            ],
-            [
-                'id'        => 2,
-                'nama'      => 'Kopi Dingin',
-                'status'    => 'Peringatan 2',
-                'status_type' => 'warning-2',
-                'alasan'    => 'Perundungan',
-                'mulai'     => 'Kemarin',
-                'berakhir'  => '—',
-                'sub_info'  => 'Alasan: Perundungan · 2 peringatan sebelumnya',
-                'aksi'      => ['Cabut', 'Mute'],
-            ],
-            [
-                'id'        => 3,
-                'nama'      => 'Bulan Pagi',
-                'status'    => 'Peringatan 1',
-                'status_type' => 'warning-1',
-                'alasan'    => 'Spam',
-                'mulai'     => '2 hari lalu',
-                'berakhir'  => '—',
-                'sub_info'  => 'Alasan: Spam · 1 peringatan sebelumnya',
-                'aksi'      => ['Cabut', 'Mute'],
-            ],
-            [
-                'id'        => 4,
-                'nama'      => 'Api Biru',
-                'status'    => 'Diblokir 7 hari',
-                'status_type' => 'blocked',
-                'alasan'    => 'Ancaman berulang',
-                'mulai'     => '5 hari lalu',
-                'berakhir'  => '2 hari lagi',
-                'sub_info'  => 'Alasan: Ancaman berulang · sisa 2 hari · 3 peringatan sebelumnya',
-                'aksi'      => ['Cabut', 'Blokir permanen'],
-            ],
-        ];
+        $idAdmin = (int) $request->session()->get('admin_id');
 
-        return view('admin.forum.index', compact('tab', 'stats', 'statsDibatasi', 'antreanLaporan', 'semuaKonten', 'penggunaDibatasi'));
+        try {
+            $this->forumService->hapusKonten(
+                $id,
+                $idAdmin,
+                $validated['alasan'] ?? null,
+                (bool) ($validated['peringatkan'] ?? false),
+                (bool) ($validated['mute_24_jam'] ?? false)
+            );
+        } catch (ForumException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Konten berhasil dihapus dan dipindahkan ke arsip moderasi.');
+    }
+
+    /**
+     * Pulihkan konten forum yang dihapus menjadi 'aktif'.
+     */
+    public function pulihkanKonten(int $id)
+    {
+        try {
+            $this->forumService->pulihkanKonten($id);
+        } catch (ForumException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Konten berhasil dipulihkan ke status aktif.');
+    }
+
+    /**
+     * Tandai seluruh laporan menunggu pada konten terkait sebagai 'ditindak'.
+     */
+    public function tindakLaporan(Request $request, int $id)
+    {
+        $idAdmin = (int) $request->session()->get('admin_id');
+
+        try {
+            $this->forumService->tindakLaporan($id, $idAdmin);
+        } catch (ForumException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Laporan berhasil ditindaklanjuti.');
+    }
+
+    /**
+     * Tolak seluruh laporan menunggu pada konten terkait ('ditolak').
+     */
+    public function tolakLaporan(Request $request, int $id)
+    {
+        $idAdmin = (int) $request->session()->get('admin_id');
+
+        try {
+            $this->forumService->tolakLaporan($id, $idAdmin);
+        } catch (ForumException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Laporan berhasil ditolak.');
+    }
+
+    /**
+     * Berikan sanksi (peringatan, mute, atau blokir) kepada pengguna.
+     */
+    public function beriSanksi(Request $request)
+    {
+        $validated = $request->validate([
+            'id_user'       => 'required|integer|exists:pengguna,id_user',
+            'id_laporan'    => 'nullable|integer|exists:laporan_forum,id_laporan',
+            'jenis'         => 'required|in:peringatan,mute,blokir',
+            'alasan'        => 'required|string|max:100',
+            'durasi_jam'    => 'nullable|integer|min:1|max:8760',
+            'berakhir_pada' => 'nullable|date|after:now',
+        ], [
+            'id_user.required'    => 'Pengguna target wajib dipilih.',
+            'id_user.exists'      => 'Pengguna target tidak ditemukan.',
+            'id_laporan.exists'   => 'Data laporan tidak ditemukan.',
+            'jenis.required'      => 'Jenis sanksi wajib dipilih.',
+            'jenis.in'            => 'Jenis sanksi harus berupa peringatan, mute, atau blokir.',
+            'alasan.required'     => 'Alasan sanksi wajib diisi.',
+            'alasan.max'          => 'Alasan sanksi maksimal 100 karakter.',
+            'durasi_jam.integer'  => 'Durasi harus berupa angka jam.',
+            'durasi_jam.min'      => 'Durasi minimal 1 jam.',
+            'berakhir_pada.date'  => 'Format tanggal berakhir sanksi tidak valid.',
+            'berakhir_pada.after' => 'Waktu berakhir sanksi harus lebih dari waktu sekarang.',
+        ]);
+
+        $berakhirPada = $validated['berakhir_pada'] ?? null;
+        if (! $berakhirPada && ! empty($validated['durasi_jam'])) {
+            $berakhirPada = now()->addHours((int) $validated['durasi_jam']);
+        }
+
+        if ($validated['jenis'] === 'mute' && ! $berakhirPada) {
+            return back()
+                ->withInput()
+                ->with('error', 'Batas waktu berakhir wajib diisi untuk sanksi mute.');
+        }
+
+        $idAdmin = (int) $request->session()->get('admin_id');
+
+        try {
+            $this->sanksiService->beriSanksi($idAdmin, [
+                'id_user'       => (int) $validated['id_user'],
+                'id_laporan'    => isset($validated['id_laporan']) ? (int) $validated['id_laporan'] : null,
+                'jenis'         => $validated['jenis'],
+                'alasan'        => $validated['alasan'],
+                'berakhir_pada' => $berakhirPada,
+            ]);
+        } catch (ForumException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Sanksi berhasil diterapkan kepada pengguna.');
+    }
+
+    /**
+     * Cabut sanksi pengguna yang masih aktif.
+     */
+    public function cabutSanksi(int $id)
+    {
+        try {
+            $this->sanksiService->cabutSanksi($id);
+        } catch (ForumException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', 'Sanksi pengguna berhasil dicabut.');
     }
 }
-
